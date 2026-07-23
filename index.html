@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="preload" as="image" href="/textures/paper-texture.webp" type="image/webp" fetchpriority="high" crossorigin="anonymous">
+  <link rel="icon" type="image/png" href="/favico.png" />
+  <link rel="apple-touch-icon" href="/favico.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#fafafa" />
+
+  <!-- SEO Meta Tags -->
+  <title>Scott & Georgina's Wedding</title>
+  <meta name="description"
+    content="Join Scott and Georgina as they celebrate their wedding day. Our story, photos, and everything you need to know." />
+  <meta name="author" content="Scott & Georgina" />
+  <meta name="keywords"
+    content="Scott and Georgina, Scott and Georgina's Wedding, wedding website, save the date, RSVP" />
+  <meta name="robots" content="index, follow" />
+  <!-- NOTE: og:image/og:url/twitter:image below are rewritten to absolute URLs
+       at build time (see seo-plugin.js) once you set the VITE_SITE_URL env var.
+       Until then they stay relative, which works fine in the browser but many
+       social link-preview scrapers (iMessage, Slack, etc.) require an absolute
+       URL to actually show the image preview. -->
+  <!-- NOTE: og:image/og:url above use %VITE_SITE_URL% (see VITE_SITE_URL env var).
+       Until you set it, these resolve to relative paths, which work fine in the
+       browser but many social link-preview scrapers (iMessage, Slack, etc.)
+       require an absolute URL to actually show the image preview. -->
+
+  <!-- Open Graph (Facebook, LinkedIn, Discord) -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Scott &amp; Georgina&#39;s Wedding" />
+  <meta property="og:description"
+    content="Join Scott and Georgina as they celebrate their wedding day. Our story, photos, and everything you need to know." />
+  <meta property="og:url" content="/" />
+  <meta property="og:site_name" content="Scott & Georgina's Wedding" />
+  <meta property="og:image" content="/og-image.webp" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:locale" content="en_US" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Scott &amp; Georgina&#39;s Wedding" />
+  <meta name="twitter:description"
+    content="Join Scott and Georgina as they celebrate their wedding day. Our story, photos, and everything you need to know." />
+  <meta name="twitter:image" content="/og-image.webp" />
+
+  <!-- Google Fonts: Hand-drawn + Primary -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Gloria+Hallelujah&family=Inter:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
+
+  <!-- Preload bazowych tekstur używanych w preloaderze -->
+
+  <style>
+    /* Absolute SEO text hiding - completely accessible to Googlebot, invisible to users */
+    .sr-only-seo {
+      position: absolute !important;
+      width: 1px !important;
+      height: 1px !important;
+      padding: 0 !important;
+      margin: -1px !important;
+      overflow: hidden !important;
+      clip: rect(0, 0, 0, 0) !important;
+      white-space: nowrap !important;
+      border: 0 !important;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- SEO Fallback for WebGL SPAs (2026 Crawl Optimization) -->
+  <div id="seo-content" class="sr-only-seo">
+    <header>
+      <h1>Scott & Georgina's Wedding</h1>
+      <p>An interactive, WebGL-powered wedding website — our story, photos, and everything you need to know for the big day.</p>
+    </header>
+
+    <nav aria-label="Main Navigation">
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/gallery">Photos</a></li>
+        <li><a href="/about">Our Story</a></li>
+        <li><a href="/contact">RSVP & Contact</a></li>
+      </ul>
+    </nav>
+
+    <main>
+      <article id="home-corridor">
+        <header>
+          <h2>Welcome to Our Wedding</h2>
+        </header>
+        <section>
+          <h3>Scott & Georgina Are Getting Married</h3>
+          <p>
+            Welcome! We're so excited to share this journey with you. This site is where you'll find our story, photos from our time
+            together, and all the details you need for our wedding day — from the ceremony and reception to travel and RSVP information.
+          </p>
+          <p>
+            Explore the site to see how we met, look through our photo gallery, and let us know you're coming by RSVPing in the contact section.
+            We can't wait to celebrate with you!
+          </p>
+        </section>
+      </article>
+
+      <article id="about-me">
+        <header>
+          <h2>Our Story</h2>
+        </header>
+        <section>
+          <h3>How We Met</h3>
+          <p>
+            Every love story is beautiful, but ours is our favorite. Add the story of how Scott and Georgina met, fell in love, and got engaged here.
+          </p>
+        </section>
+        <section>
+          <h3>Wedding Details</h3>
+          <ul>
+            <li><strong>Date:</strong> To be announced</li>
+            <li><strong>Venue:</strong> To be announced</li>
+            <li><strong>Dress code:</strong> Smart casual / cocktail attire</li>
+          </ul>
+        </section>
+      </article>
+
+      <article id="gallery-projects">
+        <header>
+          <h2>Photos & Moments</h2>
+        </header>
+        <p>
+          Browse photos from Scott and Georgina's journey together — from the proposal to the wedding day itself. Check back for updates as we add more memories.
+        </p>
+      </article>
+
+      <article id="contact-room">
+        <header>
+          <h2>RSVP & Contact</h2>
+        </header>
+        <section>
+          <h3>Let Us Know You're Coming</h3>
+          <p>
+            Please RSVP using the contact form so we can plan for the big day. If you have any questions about the venue, accommodation,
+            or anything else, feel free to reach out — we'd love to hear from you.
+          </p>
+        </section>
+      </article>
+    </main>
+  </div>
+
+  <!-- Noscript strict fallback -->
+  <noscript>
+    Please enable JavaScript to view Scott & Georgina's wedding website.
+  </noscript>
+
+  <div id="root"></div>
+  <script type="module" src="/src/main.jsx"></script>
+</body>
+
+</html>

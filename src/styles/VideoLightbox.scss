@@ -1,0 +1,66 @@
+// =============================================================================
+// VIDEO LIGHTBOX STYLES
+// =============================================================================
+
+@use 'variables' as *;
+@use 'mixins' as *;
+
+.video-lightbox {
+    @include fullscreen;
+    z-index: $z-preloader + 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(10, 10, 10, 0.85);
+    padding: $spacing-sm;
+
+    &__panel {
+        position: relative;
+        width: 100%;
+        max-width: 720px;
+        animation: video-lightbox-pop 0.3s ease;
+    }
+
+    video {
+        width: 100%;
+        max-height: 80vh;
+        display: block;
+        border-radius: 6px;
+        background: $color-black;
+        box-shadow: 0 10px 50px rgba(0, 0, 0, 0.5);
+    }
+
+    &__close {
+        position: absolute;
+        top: -2.5rem;
+        right: 0;
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: $color-white;
+        border: 2px solid $color-black;
+        border-radius: 50%;
+        font-family: $font-primary;
+        font-size: 1.1rem;
+        line-height: 1;
+        cursor: pointer;
+        transition: $transition-fast;
+
+        &:hover {
+            background: $color-neon-green;
+        }
+    }
+}
+
+@keyframes video-lightbox-pop {
+    from {
+        opacity: 0;
+        transform: scale(0.94);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}

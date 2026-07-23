@@ -1,0 +1,118 @@
+// =============================================================================
+// GUEST NAME GATE STYLES
+// =============================================================================
+
+@use 'variables' as *;
+@use 'mixins' as *;
+
+.guest-name-gate {
+    @include fullscreen;
+    z-index: $z-preloader + 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(10, 10, 10, 0.55);
+    backdrop-filter: blur(4px);
+    padding: $spacing-sm;
+
+    &__panel {
+        position: relative;
+        width: 100%;
+        max-width: 380px;
+        background: $color-white;
+        background-image: url('/textures/paper-texture.webp');
+        background-size: cover;
+        background-position: center;
+        border-radius: 4px;
+        padding: $spacing-md;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
+        text-align: center;
+        animation: guest-gate-pop 0.35s ease;
+    }
+
+    h2 {
+        font-family: $font-title;
+        font-size: 2rem;
+        color: $color-black;
+        margin: 0 0 $spacing-xs;
+    }
+
+    p {
+        font-family: $font-primary;
+        font-size: 0.95rem;
+        color: $color-gray;
+        margin: 0 0 $spacing-sm;
+    }
+
+    input[type='text'] {
+        width: 100%;
+        font-family: $font-primary;
+        font-size: 1.1rem;
+        padding: 0.75rem 1rem;
+        border: 2px solid $color-black;
+        border-radius: 4px;
+        background: rgba(255, 255, 255, 0.85);
+        color: $color-black;
+        outline: none;
+        box-sizing: border-box;
+
+        &:focus {
+            border-color: $color-neon-green;
+        }
+    }
+
+    &__error {
+        color: #c0392b !important;
+        font-size: 0.85rem !important;
+        margin-top: $spacing-xs !important;
+        margin-bottom: 0 !important;
+    }
+
+    &__actions {
+        display: flex;
+        gap: $spacing-xs;
+        margin-top: $spacing-sm;
+        justify-content: center;
+
+        button {
+            font-family: $font-primary;
+            font-size: 1rem;
+            padding: 0.6rem 1.5rem;
+            border-radius: 4px;
+            border: 2px solid $color-black;
+            cursor: pointer;
+            transition: $transition-fast;
+        }
+    }
+
+    button[type='submit'] {
+        background: $color-black;
+        color: $color-white;
+
+        &:hover {
+            background: $color-neon-green;
+            color: $color-black;
+            border-color: $color-neon-green;
+        }
+    }
+
+    &__cancel {
+        background: transparent;
+        color: $color-black;
+
+        &:hover {
+            background: rgba(0, 0, 0, 0.08);
+        }
+    }
+}
+
+@keyframes guest-gate-pop {
+    from {
+        opacity: 0;
+        transform: scale(0.92);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
