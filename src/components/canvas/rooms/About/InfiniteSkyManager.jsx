@@ -21,8 +21,12 @@ const _tempVec3 = new THREE.Vector3();
  */
 
 // Story milestones configuration
-// Each milestone appears once per "story cycle" (4 chunks = 160 units)
-const STORY_CYCLE_LENGTH = 160;
+// Each milestone appears once per "story cycle"
+// Increased from 160 so all 8 milestones (intro, journey, + 6 info pages) have generous
+// spacing and the cycle wraps around well past the last page - previously a 6th info page
+// (venue-policies) overflowed the old 160-unit cycle and collided with the next loop's
+// intro (Scott & Georgina) milestone.
+const STORY_CYCLE_LENGTH = 260;
 const ABOUT_PDF_PAGE_SLUGS = ['basics', 'schedule', 'travel', 'accommodation', 'faq', 'venue-policies'];
 
 // === TWARDA LINIA ZANIKANIA DLA MILESTONES (WORLD SPACE) ===
@@ -101,18 +105,18 @@ const InfiniteSkyManager = ({ scrollProgressRef }) => {
                 />
             ))}
 
-            {/* === STORY MILESTONES (loop every 160 units) === */}
+            {/* === STORY MILESTONES (loop every STORY_CYCLE_LENGTH units) === */}
             {activeStoryCycles.map((cycleIndex) => (
                 <group key={`story-cycle-${cycleIndex}`}>
-                    {/* === INTRO MILESTONE === */}
+                    {/* === INTRO MILESTONE (Scott & Georgina - always first) === */}
                     <IntroMilestone
-                        z={-(cycleIndex * STORY_CYCLE_LENGTH + 15)}
+                        z={-(cycleIndex * STORY_CYCLE_LENGTH + 20)}
                         scrollProgressRef={scrollProgressRef}
                     />
 
                     {/* === OUR STORY MILESTONE === */}
                     <JourneyMilestone
-                        z={-(cycleIndex * STORY_CYCLE_LENGTH + 65)}
+                        z={-(cycleIndex * STORY_CYCLE_LENGTH + 90)}
                         scrollProgressRef={scrollProgressRef}
                     />
 
@@ -120,7 +124,7 @@ const InfiniteSkyManager = ({ scrollProgressRef }) => {
                         <EventDetailsPageMilestone
                             key={`${cycleIndex}-${slug}`}
                             slug={slug}
-                            z={-(cycleIndex * STORY_CYCLE_LENGTH + 95 + idx * 15)}
+                            z={-(cycleIndex * STORY_CYCLE_LENGTH + 130 + idx * 20)}
                             scrollProgressRef={scrollProgressRef}
                         />
                     ))}

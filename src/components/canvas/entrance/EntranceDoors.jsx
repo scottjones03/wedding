@@ -142,9 +142,11 @@ const EntranceDoors = ({
             ease: 'power2.out'
         }, 0.1);
 
-        // Camera flies through - stop further back from the hero photo/video section
+        // Camera flies through - stay well short of segment -1's SegmentDoors (Z=15)
+        // so the camera lands past the entrance and doesn't sit right in their
+        // auto-open trigger zone (that proximity caused the "jump after a second" bug).
         tl.to(camera.position, {
-            z: 18,
+            z: 14,
             y: 0.2, // Match hook's base Y position
             duration: 1.8,
             ease: 'power2.inOut'
