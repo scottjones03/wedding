@@ -16,6 +16,9 @@
 
 html {
     font-size: 16px;
+    // Stop the browser from handling pull-to-refresh / rubber-band bounce
+    // itself so it doesn't fight with the scene's own touch-drag scrolling.
+    overscroll-behavior: none;
 
     @include mobile {
         font-size: 14px;
@@ -27,6 +30,11 @@ body {
     background-color: #fafafa;
     color: $color-black;
     overflow: hidden; // No scroll - 3D handles it
+    overscroll-behavior: none;
+    // Let JS (GSAP Observer / touch handlers) own all touch gestures instead of
+    // the browser's native pan/refresh/zoom handling, which was previously
+    // causing swipes on mobile to bounce-scroll or pull-to-refresh the page.
+    touch-action: none;
     @include smooth-text;
     @include hide-scrollbar;
 }
@@ -38,6 +46,7 @@ body {
     height: 100dvh;
     position: relative;
     overflow: hidden;
+    touch-action: none;
 }
 
 // Canvas wrapper
@@ -45,6 +54,7 @@ body {
     position: absolute;
     inset: 0;
     z-index: 1;
+    touch-action: none;
 }
 
 // UI Overlay

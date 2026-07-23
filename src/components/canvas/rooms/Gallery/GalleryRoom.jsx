@@ -250,6 +250,9 @@ const GalleryRoom = ({ showRoom, onReady, isExiting, isWarmup }) => {
             target: window,
             type: "wheel,touch,pointer",
             wheelSpeed: -1,
+            // Stop the browser's native touch scrolling/rubber-band/pull-to-refresh
+            // from fighting with the gallery's own swipe-driven scroll.
+            preventDefault: true,
             onWheel: (e) => {
                 if (!showRoom || selectedCard !== null || globalIsAnimating || isTransitioning) return;
                 const orig = e.event;

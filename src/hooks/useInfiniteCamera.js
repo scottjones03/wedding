@@ -255,6 +255,10 @@ const useInfiniteCamera = ({
         const scrollObserver = Observer.create({
             target: window,
             type: "wheel,touch,pointer",
+            // Stop the browser from also handling these touches (native scroll,
+            // rubber-band bounce, pull-to-refresh) so it doesn't fight with our
+            // own camera-driven scrolling on mobile.
+            preventDefault: true,
             onWheel: (e) => {
                 handleWheel(e.event);
             },
