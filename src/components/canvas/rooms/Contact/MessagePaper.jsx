@@ -152,11 +152,11 @@ const SmoothButton = ({ texture, onClick, position, size, text, fontPath }) => {
 const WEB3FORMS_KEY = import.meta.env.VITE_WEB3FORMS_KEY || '';
 
 // Only these domains are allowed to submit the form.
-// Add your real production domain here once you deploy (e.g. 'scottandgeorgina.wedding').
 // localhost/127.0.0.1 are always allowed so the form works in local dev.
 const ALLOWED_ORIGINS = [
     'localhost',
     '127.0.0.1',
+    'scott-and-georgina-wedding.uk',
 ];
 
 // ═══════════════════════════════════════════════════════════════════════
