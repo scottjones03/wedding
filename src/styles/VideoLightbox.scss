@@ -56,22 +56,33 @@
     &__sound-unlock {
         position: absolute;
         left: 50%;
-        bottom: 1rem;
-        transform: translateX(-50%);
+        top: 50%;
+        transform: translate(-50%, -50%);
         border: 2px solid $color-black;
-        background: rgba(255, 255, 255, 0.95);
+        background: rgba(255, 255, 255, 0.97);
         color: $color-black;
         font-family: $font-primary;
-        font-size: 0.95rem;
-        padding: 0.55rem 0.9rem;
-        border-radius: 0.4rem;
+        font-weight: 600;
+        font-size: 1.1rem;
+        padding: 0.85rem 1.4rem;
+        border-radius: 0.5rem;
         cursor: pointer;
-        z-index: 2;
-        transition: $transition-fast;
+        z-index: 3;
+        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.4);
+        animation: video-lightbox-pulse 1.6s ease-in-out infinite;
 
         &:hover {
             background: $color-neon-green;
         }
+    }
+}
+
+@keyframes video-lightbox-pulse {
+    0%, 100% {
+        transform: translate(-50%, -50%) scale(1);
+    }
+    50% {
+        transform: translate(-50%, -50%) scale(1.05);
     }
 }
 

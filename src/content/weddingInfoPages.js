@@ -188,6 +188,21 @@ export const WEDDING_INFO_PAGES = {
                 lines: ['On-site parking is available at Holmewood Hall with attendants guiding arrival flow.'],
             },
             {
+                heading: 'Photos and Social Media',
+                lines: [
+                    'Please keep the ceremony unplugged and phones away during the vows.',
+                    'You are welcome to share photos from the reception afterwards.',
+                ],
+            },
+        ],
+    },
+    'venue-policies': {
+        slug: 'venue-policies',
+        title: 'Venue Policies & Accessibility',
+        room: 'about',
+        description: 'Food, drink, pets, and accessibility details for Holmewood Hall.',
+        sections: [
+            {
                 heading: 'Food, Drink, and Payments',
                 lines: [
                     'Holmewood Hall is cashless (card/contactless payments only).',
@@ -213,13 +228,6 @@ export const WEDDING_INFO_PAGES = {
                     'Smoking and vaping are prohibited inside all buildings.',
                 ],
             },
-            {
-                heading: 'Photos and Social Media',
-                lines: [
-                    'Please keep the ceremony unplugged and phones away during the vows.',
-                    'You are welcome to share photos from the reception afterwards.',
-                ],
-            },
         ],
     },
 };
@@ -231,6 +239,7 @@ export const STUDIO_PAGE_SEQUENCE = [
     'accommodation',
     'schedule',
     'faq',
+    'venue-policies',
 ];
 
 export const getInfoPageBySlug = (slug) => WEDDING_INFO_PAGES[slug] || null;

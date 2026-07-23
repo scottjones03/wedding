@@ -4,7 +4,7 @@ import { useAudio } from '../../context/AudioManager';
 import { pauseBackgroundMusic, playBackgroundMusic } from '../../utils/audioManager';
 import '../../styles/VideoLightbox.scss';
 
-const PROPOSAL_VIDEO_URL = '/engagement/proposal_audio_boost.mp4';
+const PROPOSAL_VIDEO_URL = '/engagement/proposal_audio_boost.mp4?v=3';
 
 /**
  * VideoLightbox - fullscreen DOM overlay that plays the proposal video.
@@ -14,14 +14,20 @@ const VideoLightbox = () => {
     const { videoLightboxOpen, closeVideoLightbox } = useScene();
     const { suspendAmbientAudio, resumeAmbientAudio } = useAudio();
     const videoRef = useRef();
-    const [needsSoundTap, setNeedsSoundTap] = useState(false);
+    // Default to TRUE the moment the lightbox opens: always show a manual "play with sound"
+    // button rather than only revealing it as a fallback after a failed autoplay attempt.
+    // A direct click on this button is a guaranteed, unambiguous user gesture, so sound will
+    // always work regardless of each browser's autoplay-with-sound heuristics.
+    const [needsSoundTap, setNeedsSoundTap] = useState(true);
 
     useEffect(() => {
         if (videoLightboxOpen) {
             suspendAmbientAudio();
             pauseBackgroundMusic();
+            setNeedsSoundTap(true);
 
-            // Ensure the proposal video itself is audible on every open.
+            // Best-effort: try to autoplay with sound right away. If the browser allows it,
+            // onPlaying below will hide the manual button. If not, the button stays visible.
             if (videoRef.current) {
                 videoRef.current.muted = false;
                 videoRef.current.volume = 1;
@@ -44,7 +50,7 @@ const VideoLightbox = () => {
         if (!videoLightboxOpen && videoRef.current) {
             videoRef.current.pause();
             videoRef.current.currentTime = 0;
-            setNeedsSoundTap(false);
+            setNeedsSoundTap(true);
         }
     }, [videoLightboxOpen]);
 
@@ -60,6 +66,8 @@ const VideoLightbox = () => {
 
     if (!videoLightboxOpen) return null;
 
+    // Directly triggered by a real click - guaranteed to satisfy every browser's
+    // user-gesture requirement for unmuted playback.
     const ensureAudiblePlayback = () => {
         if (!videoRef.current) return;
         videoRef.current.defaultMuted = false;
@@ -68,7 +76,14 @@ const VideoLightbox = () => {
         videoRef.current.play().catch(() => {
             setNeedsSoundTap(true);
         });
-        setNeedsSoundTap(false);
+    };
+
+    // Only hide the manual sound button once we can confirm the video is actually
+    // playing AND unmuted - never hide it just because autoPlay/play() resolved.
+    const handlePlaying = () => {
+        if (videoRef.current && !videoRef.current.muted && !videoRef.current.paused) {
+            setNeedsSoundTap(false);
+        }
     };
 
     return (
@@ -90,7 +105,8 @@ const VideoLightbox = () => {
                     playsInline
                     preload="auto"
                     onLoadedData={ensureAudiblePlayback}
-                    onPlay={ensureAudiblePlayback}
+                    onPlaying={handlePlaying}
+                    onPause={() => setNeedsSoundTap(true)}
                     onClick={ensureAudiblePlayback}
                 />
                 {needsSoundTap && (
@@ -99,7 +115,7 @@ const VideoLightbox = () => {
                         className="video-lightbox__sound-unlock"
                         onClick={ensureAudiblePlayback}
                     >
-                        Tap To Enable Video Sound
+                        🔊 Tap to Play with Sound
                     </button>
                 )}
             </div>

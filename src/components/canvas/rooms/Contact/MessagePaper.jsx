@@ -723,9 +723,9 @@ const MessagePaper = ({ position = [0, 0.05, 2], onSend }) => {
                     placeholder="plus-one names or relationship (optional)..."
                     cursor={cursorVisible ? '|' : ' '}
                     onClick={() => { setActiveField('plusOneNotes'); setTimeout(() => plusOneNotesInputRef.current?.focus(), 10); }}
-                    position={[-0.5, 0.008, -0.29]}
+                    position={[-0.5, 0.008, -0.26]}
                     baseRotation={[-Math.PI / 2, 0, 0.02]}
-                    hitboxPosition={[0, 0.005, -0.29]}
+                    hitboxPosition={[0, 0.005, -0.26]}
                     hitboxSize={[PAPER_WIDTH * 0.85, 0.08]}
                     fontSize={0.04}
                     maxWidth={PAPER_WIDTH * 0.8}
@@ -738,9 +738,9 @@ const MessagePaper = ({ position = [0, 0.05, 2], onSend }) => {
                     placeholder="room / nearby lodge request (optional)..."
                     cursor={cursorVisible ? '|' : ' '}
                     onClick={() => { setActiveField('stayRequest'); setTimeout(() => stayRequestInputRef.current?.focus(), 10); }}
-                    position={[-0.5, 0.008, -0.23]}
+                    position={[-0.5, 0.008, -0.15]}
                     baseRotation={[-Math.PI / 2, 0, 0.02]}
-                    hitboxPosition={[0, 0.005, -0.23]}
+                    hitboxPosition={[0, 0.005, -0.15]}
                     hitboxSize={[PAPER_WIDTH * 0.85, 0.08]}
                     fontSize={0.04}
                     maxWidth={PAPER_WIDTH * 0.8}
@@ -755,10 +755,10 @@ const MessagePaper = ({ position = [0, 0.05, 2], onSend }) => {
                     cursor={cursorVisible ? '|' : ' '}
                     onClick={() => { setActiveField('message'); setTimeout(() => dietaryInputRef.current?.focus(), 10); }}
                     // Layout
-                    position={[-0.46, 0.008, -0.11]}
+                    position={[-0.46, 0.008, -0.08]}
                     baseRotation={[-Math.PI / 2, 0, 0.02]}
-                    hitboxPosition={[0, 0.005, 0.12]}
-                    hitboxSize={[PAPER_WIDTH * 0.85, 0.36]}
+                    hitboxPosition={[0, 0.005, 0.06]}
+                    hitboxSize={[PAPER_WIDTH * 0.85, 0.26]}
                     // Style
                     fontSize={0.04}
                     maxWidth={PAPER_WIDTH * 0.75}
@@ -769,7 +769,7 @@ const MessagePaper = ({ position = [0, 0.05, 2], onSend }) => {
                 />
 
                 <Text
-                    position={[-0.5, 0.02, 0.21]}
+                    position={[-0.5, 0.02, 0.14]}
                     rotation={[-Math.PI / 2, 0, 0]}
                     fontSize={0.031}
                     color="#333333"
@@ -786,7 +786,7 @@ const MessagePaper = ({ position = [0, 0.05, 2], onSend }) => {
 
                 {guestType !== 'day' && (
                     <Text
-                        position={[0.18, 0.02, 0.21]}
+                        position={[0.18, 0.02, 0.14]}
                         rotation={[-Math.PI / 2, 0, 0]}
                         fontSize={0.028}
                         color="#333333"
@@ -803,7 +803,7 @@ const MessagePaper = ({ position = [0, 0.05, 2], onSend }) => {
                 )}
 
                 <Text
-                    position={[-0.5, 0.02, 0.36]}
+                    position={[-0.5, 0.02, 0.27]}
                     rotation={[-Math.PI / 2, 0, 0]}
                     fontSize={0.031}
                     color="#333333"
@@ -819,7 +819,7 @@ const MessagePaper = ({ position = [0, 0.05, 2], onSend }) => {
                 </Text>
 
                 <Text
-                    position={[-0.5, 0.02, 0.43]}
+                    position={[-0.5, 0.02, 0.34]}
                     rotation={[-Math.PI / 2, 0, 0]}
                     fontSize={0.031}
                     color="#333333"

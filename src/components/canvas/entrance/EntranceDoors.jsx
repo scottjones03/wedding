@@ -142,9 +142,9 @@ const EntranceDoors = ({
             ease: 'power2.out'
         }, 0.1);
 
-        // Camera flies through - STOP CLOSER to hero photo
+        // Camera flies through - stop further back from the hero photo/video section
         tl.to(camera.position, {
-            z: 14,
+            z: 18,
             y: 0.2, // Match hook's base Y position
             duration: 1.8,
             ease: 'power2.inOut'

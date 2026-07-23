@@ -18,6 +18,10 @@ export const SceneProvider = ({ children }) => {
     const initialRoom = useRef(getInitialRoomFromUrl());
     const initialInfoPage = useRef(getInitialInfoPageFromUrl());
     const deeplinkHandled = useRef(false);
+    // Holds a slug that should be applied the moment its target room is actually entered.
+    // This prevents a stale/deep-linked info page slug from flashing over the wrong room
+    // (e.g. showing the FAQ page immediately when a guest just walks through the About door).
+    const pendingInfoPageSlug = useRef(null);
 
     const [currentRoom, setCurrentRoom] = useState(null); // null = corridor, 'about', 'portfolio', etc.
     const [hasEntered, setHasEntered] = useState(false);  // Has user clicked entrance doors?
@@ -38,7 +42,10 @@ export const SceneProvider = ({ children }) => {
 
     // Proposal video lightbox - opened by clicking the couple's portrait
     const [videoLightboxOpen, setVideoLightboxOpen] = useState(false);
-    const [infoPageSlug, setInfoPageSlug] = useState(initialInfoPage.current);
+    // Never seed this directly from the URL - a deep-linked info page is only applied once
+    // the target room is actually entered (see pendingInfoPageSlug + enterRoom below), so a
+    // stale URL never flashes the wrong page over whatever room the guest is really entering.
+    const [infoPageSlug, setInfoPageSlug] = useState(null);
 
     // Inspecting state removed to avoid global re-renders
 
@@ -46,7 +53,14 @@ export const SceneProvider = ({ children }) => {
         setCurrentRoom(roomId);
         setExitRequested(false); // Clear any pending exit request
         setOverlayContent(null); // Clear overlay on room change
-        if (roomId === 'about' && !isTeleporting) {
+
+        // Only show an info page here if one was explicitly requested for THIS room entry
+        // (via openInfoPage, e.g. a Studio monitor button or a genuine deep link). Any plain
+        // door-click or map teleport into a room always starts fresh with no info page open.
+        if (pendingInfoPageSlug.current) {
+            setInfoPageSlug(pendingInfoPageSlug.current);
+            pendingInfoPageSlug.current = null;
+        } else {
             setInfoPageSlug(null);
         }
 
@@ -56,7 +70,7 @@ export const SceneProvider = ({ children }) => {
         setIsTeleporting(false);
         setPendingDoorClick(null);
         // teleportPhase is cleared by finishPaperOpen after animation
-    }, [isTeleporting]);
+    }, []);
 
     const exitRoom = useCallback(() => {
         setCurrentRoom(null);
@@ -134,9 +148,13 @@ export const SceneProvider = ({ children }) => {
         const page = getInfoPageBySlug(slug);
         if (!page) return;
 
-        setInfoPageSlug(slug);
         if (page.room && page.room !== currentRoom) {
+            // Defer applying the slug until the target room is actually entered, so it can't
+            // flash over whatever room/state we're currently in during the teleport transition.
+            pendingInfoPageSlug.current = slug;
             teleportTo(page.room);
+        } else {
+            setInfoPageSlug(slug);
         }
     }, [currentRoom, teleportTo]);
 

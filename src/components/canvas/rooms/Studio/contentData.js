@@ -157,8 +157,8 @@ const RAW_CONTENT_DATA = [
     {
         id: 'blog-003',
         platform: 'blog',
-        title: 'Travel, Stay and FAQ',
-        description: 'Open travel, accommodation, schedule, and FAQ details.',
+        title: 'Wedding FAQ',
+        description: 'Dress code, children, plus-ones, parking, and photos.',
         frontTexture: '/engagement/IMG_8864.webp',
         paintedFrontTexture: '/engagement/IMG_8864.webp',
         thumbnail: '/engagement/IMG_8864.webp',
@@ -192,6 +192,19 @@ const RAW_CONTENT_DATA = [
         date: '2025-11-28',
         readTime: '3 min',
         actionLabel: 'Open Travel Details',
+    },
+    {
+        id: 'blog-006',
+        platform: 'blog',
+        title: 'Venue Policies & Accessibility',
+        description: 'Food, drink, payments, pets, and accessibility info.',
+        frontTexture: '/engagement/IMG_8885.webp',
+        paintedFrontTexture: '/engagement/IMG_8885.webp',
+        thumbnail: '/engagement/IMG_8885.webp',
+        url: 'page:venue-policies',
+        date: '2025-11-25',
+        readTime: '3 min',
+        actionLabel: 'Open Venue Policies',
     },
 ];
 

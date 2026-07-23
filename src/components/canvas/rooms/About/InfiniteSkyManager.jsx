@@ -23,7 +23,7 @@ const _tempVec3 = new THREE.Vector3();
 // Story milestones configuration
 // Each milestone appears once per "story cycle" (4 chunks = 160 units)
 const STORY_CYCLE_LENGTH = 160;
-const ABOUT_PDF_PAGE_SLUGS = ['basics', 'schedule', 'travel', 'accommodation', 'faq'];
+const ABOUT_PDF_PAGE_SLUGS = ['basics', 'schedule', 'travel', 'accommodation', 'faq', 'venue-policies'];
 
 // === TWARDA LINIA ZANIKANIA DLA MILESTONES (WORLD SPACE) ===
 // Pokój About jest na Z = -25, więc -25 to drzwi pokoju
