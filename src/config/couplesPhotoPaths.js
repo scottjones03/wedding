@@ -1,4 +1,4 @@
-export const COUPLES_PHOTO_PATHS = [
+const ALL_COUPLES_PHOTO_PATHS = [
     '/couples_photo/IMG_0039.webp',
     '/couples_photo/IMG_0067.webp',
     '/couples_photo/IMG_0295.webp',
@@ -146,3 +146,11 @@ export const COUPLES_PHOTO_PATHS = [
     '/couples_photo/IMG_9915.webp',
     '/couples_photo/IMG_9961.webp',
 ];
+
+// Only a handful of photos are actually shown in the 3D gallery room — loading
+// the full set (146 photos) as GPU textures was crashing the tab on phones.
+// Increase this number if devices can handle more; keep the full list above
+// so it's easy to swap which ones show later.
+const GALLERY_PHOTO_LIMIT = 10;
+
+export const COUPLES_PHOTO_PATHS = ALL_COUPLES_PHOTO_PATHS.slice(0, GALLERY_PHOTO_LIMIT);
