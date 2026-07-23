@@ -3,6 +3,7 @@ import { useRef, useState, useEffect, useMemo, useCallback } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Text, useTexture, Html, useCursor } from '@react-three/drei';
 import * as THREE from 'three';
+import { useScene } from '../../../../context/SceneContext';
 
 const PAPER_WIDTH = 1.51; // Legacy ratio 1197/1340
 const PAPER_HEIGHT = 1.7;
@@ -298,12 +299,27 @@ const MessagePaper = ({ position = [0, 0.05, 2], onSend }) => {
     const hiddenInputRef = useRef();
     const emailInputRef = useRef();
     const plusOnesInputRef = useRef();
+    const plusOneNotesInputRef = useRef();
+    const stayRequestInputRef = useRef();
+    const dietaryInputRef = useRef();
+    const { guestType } = useScene();
 
     // Form State
-    const [message, setMessage] = useState('');
+    const [dietaryNotes, setDietaryNotes] = useState('');
     const [email, setEmail] = useState('');
     const [plusOnes, setPlusOnes] = useState('');
+    const [plusOneNotes, setPlusOneNotes] = useState('');
+    const [stayRequest, setStayRequest] = useState('');
+    const [attendanceType, setAttendanceType] = useState(guestType === 'day' ? 'day' : 'evening');
+    const [wantsSharedTaxi, setWantsSharedTaxi] = useState(false);
+    const [offeringTransport, setOfferingTransport] = useState(false);
     const [activeField, setActiveField] = useState(null);
+        useEffect(() => {
+            if (guestType === 'day') {
+                setAttendanceType('day');
+            }
+        }, [guestType]);
+
     const [cursorVisible, setCursorVisible] = useState(true);
     const [botcheck, setBotcheck] = useState(''); // Honeypot state
     const formLoadedAt = useRef(Date.now()); // Timing trap: track when form mounted
@@ -321,7 +337,11 @@ const MessagePaper = ({ position = [0, 0.05, 2], onSend }) => {
         const newErrors = {};
         if (!email.trim()) newErrors.email = 'Email required';
         else if (!isValidEmail(email)) newErrors.email = 'Invalid email format';
-        if (!plusOnes.trim()) newErrors.subject = 'Please enter number of guests (0 if none)';
+        if (!plusOnes.trim()) newErrors.subject = 'Please enter number of plus-one requests (0 if none)';
+        if (!attendanceType) newErrors.attendance = 'Please select full day or evening attendance';
+        if (guestType === 'day' && attendanceType !== 'day') {
+            newErrors.attendance = 'Day guests can only confirm full day attendance';
+        }
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
@@ -359,9 +379,15 @@ const MessagePaper = ({ position = [0, 0.05, 2], onSend }) => {
         } else if (uvY > 0.68) {
             setActiveField('subject');
             setTimeout(() => plusOnesInputRef.current?.focus(), 10);
+        } else if (uvY > 0.58) {
+            setActiveField('plusOneNotes');
+            setTimeout(() => plusOneNotesInputRef.current?.focus(), 10);
+        } else if (uvY > 0.48) {
+            setActiveField('stayRequest');
+            setTimeout(() => stayRequestInputRef.current?.focus(), 10);
         } else if (uvY > 0.18) {
             setActiveField('message');
-            setTimeout(() => hiddenInputRef.current?.focus(), 10);
+            setTimeout(() => dietaryInputRef.current?.focus(), 10);
         }
     }, []);
 
@@ -417,9 +443,11 @@ const MessagePaper = ({ position = [0, 0.05, 2], onSend }) => {
             // --- 2. Modern 2026 AI Content Verification ---
             const plusOnesAnalysis = analyzeContentAI(plusOnes, true);
             // Dietary requirements are optional, so only spam-check it if the guest wrote something
-            const messageAnalysis = message.trim() ? analyzeContentAI(message, false) : { isSpam: false };
+            const plusOneNotesAnalysis = plusOneNotes.trim() ? analyzeContentAI(plusOneNotes, false) : { isSpam: false };
+            const stayRequestAnalysis = stayRequest.trim() ? analyzeContentAI(stayRequest, false) : { isSpam: false };
+            const dietaryAnalysis = dietaryNotes.trim() ? analyzeContentAI(dietaryNotes, false) : { isSpam: false };
 
-            if (plusOnesAnalysis.isSpam || messageAnalysis.isSpam) {
+            if (plusOnesAnalysis.isSpam || plusOneNotesAnalysis.isSpam || stayRequestAnalysis.isSpam || dietaryAnalysis.isSpam) {
                 setErrors({ message: 'Our AI flagged this as spam. Please write clearly.' });
                 setIsSubmitting(false);
                 return;
@@ -461,12 +489,27 @@ const MessagePaper = ({ position = [0, 0.05, 2], onSend }) => {
                     from_name: "Scott & Georgina's Wedding Website",
                     subject: `Wedding RSVP from ${email}`,
                     email: email,
+                    guest_type: guestType || 'unknown',
+                    attendance_type: attendanceType,
                     // Explicit Reply-To so replying goes straight to the guest
                     // (Web3Forms also does this automatically for a field named "email").
                     replyto: email,
                     plus_ones: plusOnes,
-                    dietary_requirements: message || 'None',
-                    message: `Plus ones: ${plusOnes}\nDietary requirements: ${message || 'None'}`
+                    plus_one_request_details: plusOneNotes || 'None',
+                    room_or_lodge_request: stayRequest || 'None',
+                    shared_taxi_interest: wantsSharedTaxi ? 'Yes' : 'No',
+                    offering_transport: offeringTransport ? 'Yes' : 'No',
+                    dietary_requirements: dietaryNotes || 'None',
+                    message: [
+                        `Guest type: ${guestType || 'unknown'}`,
+                        `Attendance: ${attendanceType}`,
+                        `Plus ones requested: ${plusOnes}`,
+                        `Plus-one details: ${plusOneNotes || 'None'}`,
+                        `Room/lodge request: ${stayRequest || 'None'}`,
+                        `Interested in shared taxi: ${wantsSharedTaxi ? 'Yes' : 'No'}`,
+                        `Offering transport: ${offeringTransport ? 'Yes' : 'No'}`,
+                        `Dietary requirements: ${dietaryNotes || 'None'}`,
+                    ].join('\n')
                 })
             });
 
@@ -475,12 +518,27 @@ const MessagePaper = ({ position = [0, 0.05, 2], onSend }) => {
             if (result.success) {
                 setSubmitStatus('success');
                 recordSubmission(); // Record for rate limiting
-                onSend?.({ email, plusOnes, dietaryNotes: message });
+                onSend?.({
+                    email,
+                    guestType,
+                    attendanceType,
+                    plusOnes,
+                    plusOneNotes,
+                    stayRequest,
+                    wantsSharedTaxi,
+                    offeringTransport,
+                    dietaryNotes,
+                });
 
                 // Clear form after success
-                setMessage('');
+                setDietaryNotes('');
                 setEmail('');
                 setPlusOnes('');
+                setPlusOneNotes('');
+                setStayRequest('');
+                setWantsSharedTaxi(false);
+                setOfferingTransport(false);
+                setAttendanceType(guestType === 'day' ? 'day' : 'evening');
                 formLoadedAt.current = Date.now(); // Reset timing trap
             } else {
                 throw new Error(result.message || 'Failed to send');
@@ -491,17 +549,35 @@ const MessagePaper = ({ position = [0, 0.05, 2], onSend }) => {
         } finally {
             setIsSubmitting(false);
         }
-    }, [message, email, plusOnes, onSend, validateForm]);
+    }, [
+        dietaryNotes,
+        email,
+        plusOnes,
+        plusOneNotes,
+        stayRequest,
+        wantsSharedTaxi,
+        offeringTransport,
+        attendanceType,
+        guestType,
+        onSend,
+        validateForm,
+    ]);
 
     // Input handlers
     const handleMessageInput = useCallback((e) => {
-        if (e.target.value.length <= 300) setMessage(e.target.value);
+        if (e.target.value.length <= 300) setDietaryNotes(e.target.value);
     }, []);
     const handleEmailInput = useCallback((e) => {
         if (e.target.value.length <= 50) setEmail(e.target.value);
     }, []);
     const handlePlusOnesInput = useCallback((e) => {
         if (e.target.value.length <= 50) setPlusOnes(e.target.value);
+    }, []);
+    const handlePlusOneNotesInput = useCallback((e) => {
+        if (e.target.value.length <= 120) setPlusOneNotes(e.target.value);
+    }, []);
+    const handleStayRequestInput = useCallback((e) => {
+        if (e.target.value.length <= 120) setStayRequest(e.target.value);
     }, []);
     const handleBotcheckInput = useCallback((e) => {
         setBotcheck(e.target.checked);
@@ -512,7 +588,10 @@ const MessagePaper = ({ position = [0, 0.05, 2], onSend }) => {
             const active = document.activeElement;
             if (active !== hiddenInputRef.current &&
                 active !== emailInputRef.current &&
-                active !== plusOnesInputRef.current) {
+                active !== plusOnesInputRef.current &&
+                active !== plusOneNotesInputRef.current &&
+                active !== stayRequestInputRef.current &&
+                active !== dietaryInputRef.current) {
                 setActiveField(null);
             }
         }, 100);
@@ -523,7 +602,7 @@ const MessagePaper = ({ position = [0, 0.05, 2], onSend }) => {
         const maxCharsPerLine = 28;
         const maxLines = 10;
         const lines = [];
-        const words = message.split(' ');
+        const words = dietaryNotes.split(' ');
         let currentLine = '';
 
         const breakLongWord = (word) => {
@@ -553,7 +632,7 @@ const MessagePaper = ({ position = [0, 0.05, 2], onSend }) => {
         });
         if (currentLine) lines.push(currentLine);
         return lines.slice(0, maxLines).join('\n');
-    }, [message]);
+    }, [dietaryNotes]);
 
     // Store original vertex positions for fold animation
     // Paper animation (flutter)
@@ -570,9 +649,12 @@ const MessagePaper = ({ position = [0, 0.05, 2], onSend }) => {
         <group ref={groupRef} position={position}>
             {/* Hidden HTML inputs */}
             <Html position={[0, 0, 0]} style={{ position: 'fixed', left: '-9999px', top: '-9999px', opacity: 0, pointerEvents: 'none' }}>
-                <textarea ref={hiddenInputRef} value={message} onChange={handleMessageInput} onBlur={handleBlur} aria-label="Dietary requirements and notes" style={{ pointerEvents: 'auto' }} />
+                <textarea ref={hiddenInputRef} value={dietaryNotes} onChange={handleMessageInput} onBlur={handleBlur} aria-label="Dietary requirements and notes" style={{ pointerEvents: 'auto' }} />
                 <input ref={emailInputRef} type="email" value={email} onChange={handleEmailInput} onBlur={handleBlur} aria-label="Email" style={{ pointerEvents: 'auto' }} />
                 <input ref={plusOnesInputRef} type="text" value={plusOnes} onChange={handlePlusOnesInput} onBlur={handleBlur} aria-label="Number of plus ones" style={{ pointerEvents: 'auto' }} />
+                <input ref={plusOneNotesInputRef} type="text" value={plusOneNotes} onChange={handlePlusOneNotesInput} onBlur={handleBlur} aria-label="Plus one request details" style={{ pointerEvents: 'auto' }} />
+                <input ref={stayRequestInputRef} type="text" value={stayRequest} onChange={handleStayRequestInput} onBlur={handleBlur} aria-label="Room or lodge request" style={{ pointerEvents: 'auto' }} />
+                <textarea ref={dietaryInputRef} value={dietaryNotes} onChange={handleMessageInput} onBlur={handleBlur} aria-label="Dietary requirements" style={{ pointerEvents: 'auto' }} />
                 <input type="checkbox" name="botcheck" checked={botcheck} onChange={handleBotcheckInput} style={{ pointerEvents: 'auto' }} />
             </Html>
 
@@ -635,26 +717,122 @@ const MessagePaper = ({ position = [0, 0.05, 2], onSend }) => {
                     fontPath={FONT_PATH}
                 />
 
+                <InteractiveTextField
+                    isActive={activeField === 'plusOneNotes'}
+                    value={plusOneNotes}
+                    placeholder="plus-one names/relationship (special request)..."
+                    cursor={cursorVisible ? '|' : ' '}
+                    onClick={() => { setActiveField('plusOneNotes'); setTimeout(() => plusOneNotesInputRef.current?.focus(), 10); }}
+                    position={[-0.5, 0.008, -0.34]}
+                    baseRotation={[-Math.PI / 2, 0, 0.02]}
+                    hitboxPosition={[0, 0.005, -0.34]}
+                    hitboxSize={[PAPER_WIDTH * 0.85, 0.08]}
+                    fontSize={0.04}
+                    maxWidth={PAPER_WIDTH * 0.8}
+                    fontPath={FONT_PATH}
+                />
+
+                <InteractiveTextField
+                    isActive={activeField === 'stayRequest'}
+                    value={stayRequest}
+                    placeholder="room / nearby lodge request (optional)..."
+                    cursor={cursorVisible ? '|' : ' '}
+                    onClick={() => { setActiveField('stayRequest'); setTimeout(() => stayRequestInputRef.current?.focus(), 10); }}
+                    position={[-0.5, 0.008, -0.23]}
+                    baseRotation={[-Math.PI / 2, 0, 0.02]}
+                    hitboxPosition={[0, 0.005, -0.23]}
+                    hitboxSize={[PAPER_WIDTH * 0.85, 0.08]}
+                    fontSize={0.04}
+                    maxWidth={PAPER_WIDTH * 0.8}
+                    fontPath={FONT_PATH}
+                />
+
                 {/* Dietary Requirements Field */}
                 <InteractiveTextField
                     isActive={activeField === 'message'}
                     value={formattedMessage}
-                    placeholder="names / relationship of plus ones and dietary requirements (optional)... we will do our best to accommodate!"
+                    placeholder="dietary requirements or extra notes (optional)..."
                     cursor={cursorVisible ? '|' : ' '}
-                    onClick={() => { setActiveField('message'); setTimeout(() => hiddenInputRef.current?.focus(), 10); }}
+                    onClick={() => { setActiveField('message'); setTimeout(() => dietaryInputRef.current?.focus(), 10); }}
                     // Layout
-                    position={[-0.46, 0.008, -0.3]}
+                    position={[-0.46, 0.008, -0.11]}
                     baseRotation={[-Math.PI / 2, 0, 0.02]}
-                    hitboxPosition={[0, 0.005, 0.1]}
-                    hitboxSize={[PAPER_WIDTH * 0.85, 0.55]}
+                    hitboxPosition={[0, 0.005, 0.12]}
+                    hitboxSize={[PAPER_WIDTH * 0.85, 0.36]}
                     // Style
-                    fontSize={0.045}
+                    fontSize={0.04}
                     maxWidth={PAPER_WIDTH * 0.75}
                     fontPath={FONT_PATH}
                     anchorY="top"
                     textAlign="left"
                     lineHeight={1.35}
                 />
+
+                <Text
+                    position={[-0.5, 0.02, 0.36]}
+                    rotation={[-Math.PI / 2, 0, 0]}
+                    fontSize={0.038}
+                    color="#333333"
+                    font={FONT_PATH}
+                    anchorX="left"
+                    anchorY="middle"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        if (guestType !== 'day') setAttendanceType('evening');
+                    }}
+                >
+                    {guestType === 'day' ? 'Attendance: Full day (fixed for day guests)' : `Attendance: ${attendanceType === 'day' ? 'Full day' : 'Evening only'}`}
+                </Text>
+
+                {guestType !== 'day' && (
+                    <Text
+                        position={[0.05, 0.02, 0.36]}
+                        rotation={[-Math.PI / 2, 0, 0]}
+                        fontSize={0.032}
+                        color="#333333"
+                        font={FONT_PATH}
+                        anchorX="left"
+                        anchorY="middle"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setAttendanceType(attendanceType === 'day' ? 'evening' : 'day');
+                        }}
+                    >
+                        (click to toggle)
+                    </Text>
+                )}
+
+                <Text
+                    position={[-0.5, 0.02, 0.46]}
+                    rotation={[-Math.PI / 2, 0, 0]}
+                    fontSize={0.035}
+                    color="#333333"
+                    font={FONT_PATH}
+                    anchorX="left"
+                    anchorY="middle"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        setWantsSharedTaxi((prev) => !prev);
+                    }}
+                >
+                    {`[${wantsSharedTaxi ? 'x' : ' '}] Interested in shared taxi`}
+                </Text>
+
+                <Text
+                    position={[-0.5, 0.02, 0.54]}
+                    rotation={[-Math.PI / 2, 0, 0]}
+                    fontSize={0.035}
+                    color="#333333"
+                    font={FONT_PATH}
+                    anchorX="left"
+                    anchorY="middle"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        setOfferingTransport((prev) => !prev);
+                    }}
+                >
+                    {`[${offeringTransport ? 'x' : ' '}] I can offer transport`}
+                </Text>
 
                 {/* === SEND BUTTON === */}
                 <SmoothButton
@@ -677,7 +855,7 @@ const MessagePaper = ({ position = [0, 0.05, 2], onSend }) => {
                         anchorX="center"
                         anchorY="middle"
                     >
-                        {errors.email || errors.subject || errors.message || 'Please fill all fields'}
+                        {errors.email || errors.subject || errors.attendance || errors.message || 'Please fill all fields'}
                     </Text>
                 )}
 

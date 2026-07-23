@@ -2,9 +2,12 @@ import { createContext, useContext, useState, useEffect, useRef, useCallback } f
 
 const AudioContext = createContext({
     isMuted: false,
+    isAmbientSuspended: false,
     toggleMute: () => { },
     play: () => { },
     enableAudio: () => { },
+    suspendAmbientAudio: () => { },
+    resumeAmbientAudio: () => { },
     audioEnabled: false,
     globalVolume: 0.5,
     setGlobalVolume: () => { },
@@ -26,6 +29,8 @@ export const AudioProvider = ({ children }) => {
     });
 
     const [audioEnabled, setAudioEnabled] = useState(false);
+    const [isAmbientSuspended, setIsAmbientSuspended] = useState(false);
+    const ambientSuspendCount = useRef(0);
 
     // Track active sounds to stop them later
     const activeSounds = useRef({});
@@ -37,7 +42,7 @@ export const AudioProvider = ({ children }) => {
         // Update all active sounds
         Object.values(activeSounds.current).forEach(audio => {
             if (audio) {
-                audio.muted = isMuted;
+                audio.muted = isMuted || isAmbientSuspended;
                 // Scale effective volume by global volume
                 // We stored the requested "base" volume on the object as _baseVolume
                 const base = audio._baseVolume !== undefined ? audio._baseVolume : 1.0;
@@ -46,7 +51,7 @@ export const AudioProvider = ({ children }) => {
             }
         });
 
-    }, [isMuted, globalVolume]);
+    }, [isMuted, globalVolume, isAmbientSuspended]);
 
     const toggleMute = () => setIsMuted(prev => !prev);
 
@@ -75,6 +80,20 @@ export const AudioProvider = ({ children }) => {
         }
     }, [audioEnabled]);
 
+    const suspendAmbientAudio = useCallback(() => {
+        ambientSuspendCount.current += 1;
+        if (ambientSuspendCount.current > 0) {
+            setIsAmbientSuspended(true);
+        }
+    }, []);
+
+    const resumeAmbientAudio = useCallback(() => {
+        ambientSuspendCount.current = Math.max(0, ambientSuspendCount.current - 1);
+        if (ambientSuspendCount.current === 0) {
+            setIsAmbientSuspended(false);
+        }
+    }, []);
+
     const play = useCallback((soundName, { loop = false, volume = 1.0 } = {}) => {
         // Graceful degradation if files missing
         const soundPaths = {
@@ -95,7 +114,7 @@ export const AudioProvider = ({ children }) => {
         audio._baseVolume = volume; // Custom prop to remember intended relative mix
 
         // Apply current global state
-        audio.muted = isMuted;
+        audio.muted = isMuted || isAmbientSuspended;
         let targetVol = volume * globalVolume;
         audio.volume = Math.max(0, Math.min(1, targetVol));
 
@@ -136,16 +155,19 @@ export const AudioProvider = ({ children }) => {
                 delete activeSounds.current[soundName];
             }
         };
-    }, [isMuted, globalVolume]);
+    }, [isMuted, globalVolume, isAmbientSuspended]);
 
     return (
         <AudioContext.Provider value={{
             isMuted,
+            isAmbientSuspended,
             toggleMute,
             globalVolume,
             setGlobalVolume: enhancedSetGlobalVolume,
             play,
             enableAudio,
+            suspendAmbientAudio,
+            resumeAmbientAudio,
             audioEnabled
         }}>
             {children}

@@ -4,15 +4,15 @@
  * This file contains all content items for ENGAGEMENT STUDIO monitor tower.
  * Each item will be displayed on a monitor in the tower.
  * 
- * Platforms: 'youtube', 'blog', 'tiktok'
+ * Platforms: 'video', 'blog'
  */
 
 export const PLATFORM_CONFIG = {
-    youtube: {
+    video: {
         color: '#FF0000',
         accentColor: '#cc0000',
         icon: '▶',
-        label: 'YouTube',
+        label: 'Video',
         shape: 'tv', // Wide CRT style
     },
     blog: {
@@ -21,13 +21,6 @@ export const PLATFORM_CONFIG = {
         icon: '📝',
         label: 'Blog',
         shape: 'monitor', // Thin desktop monitor
-    },
-    tiktok: {
-        color: '#00F2EA',
-        accentColor: '#FF0050',
-        icon: '🎵',
-        label: 'TikTok',
-        shape: 'phone', // Vertical phone
     },
     instagram: {
         color: '#E1306C',
@@ -62,43 +55,46 @@ export const PLATFORM_CONFIG = {
 // Placeholder wedding content — replace title/description/url with your own,
 // and drop your own images at the same frontTexture/paintedFrontTexture paths in public/.
 const RAW_CONTENT_DATA = [
-    // ============ YouTube Videos ============
+    // ============ Proposal Videos ============
     {
         id: 'yt-001',
-        platform: 'youtube',
-        title: 'Save the Date! 💍',
-        description: 'We\'re getting married! Watch our save-the-date video and get ready to celebrate with us.',
+        platform: 'video',
+        title: 'Watch Our Proposal Film',
+        description: 'Open our website video room to watch the full proposal film.',
         frontTexture: '/engagement/IMG_8927.webp',
         paintedFrontTexture: '/engagement/IMG_8927.webp',
         thumbnail: null,
-        url: '',
+        url: 'video:proposal',
         date: '2026-01-10',
         views: '',
         duration: '',
+        actionLabel: 'Play Proposal Video',
     },
     {
         id: 'yt-002',
-        platform: 'youtube',
-        title: 'How We Got Engaged 💕',
-        description: 'The story behind the proposal — watch how it all happened.',
+        platform: 'video',
+        title: 'How We Got Engaged',
+        description: 'Jump straight into the proposal video with full audio.',
         frontTexture: '/engagement/IMG_8879.webp',
         paintedFrontTexture: '/engagement/IMG_8879.webp',
         thumbnail: null,
-        url: '',
+        url: 'video:proposal',
         date: '2025-10-11',
         views: '',
         duration: '',
+        actionLabel: 'Play Proposal Video',
     },
     {
         id: 'yt-003',
-        platform: 'youtube',
+        platform: 'video',
         title: 'Our Engagement Video',
-        description: 'A short film about our journey together.',
+        description: 'Watch our engagement story in the on-site video experience.',
         thumbnail: null,
-        url: '',
+        url: 'video:proposal',
         date: '2025-12-28',
         views: '',
         duration: '',
+        actionLabel: 'Play Proposal Video',
     },
 
     // ============ Blog Posts ============
@@ -110,9 +106,10 @@ const RAW_CONTENT_DATA = [
         frontTexture: '/engagement/IMG_8885.webp',
         paintedFrontTexture: '/engagement/IMG_8885.webp',
         thumbnail: null,
-        url: '',
+        url: 'page:basics',
         date: '2026-01-08',
         readTime: '2 min',
+        actionLabel: 'Open Wedding Basics',
     },
     {
         id: 'blog-002',
@@ -120,56 +117,21 @@ const RAW_CONTENT_DATA = [
         title: 'Our Story',
         description: 'How we met and fell in love.',
         thumbnail: null,
-        url: '',
+        url: 'page:our-story',
         date: '2025-12-20',
         readTime: '5 min',
+        actionLabel: 'Open Our Story Page',
     },
     {
         id: 'blog-003',
         platform: 'blog',
-        title: 'Wedding Details',
-        description: 'Everything you need to know about the big day.',
+        title: 'Travel, Stay and FAQ',
+        description: 'Open travel, accommodation, schedule, and FAQ details.',
         thumbnail: null,
-        url: '',
+        url: 'page:faq',
         date: '2025-12-10',
         readTime: '3 min',
-    },
-
-    // ============ TikToks ============
-    {
-        id: 'tt-001',
-        platform: 'tiktok',
-        title: 'Follow our wedding journey! ✨',
-        description: 'Follow along as we plan our big day.',
-        frontTexture: '/engagement/IMG_8878.webp',
-        paintedFrontTexture: '/engagement/IMG_8878.webp',
-        thumbnail: null,
-        url: '',
-        date: '2026-01-09',
-        views: '',
-        likes: '',
-    },
-    {
-        id: 'tt-002',
-        platform: 'tiktok',
-        title: 'Getting ready for the big day 💍',
-        description: 'Behind the scenes of wedding prep.',
-        thumbnail: null,
-        url: '',
-        date: '2026-01-03',
-        views: '',
-        likes: '',
-    },
-    {
-        id: 'tt-003',
-        platform: 'tiktok',
-        title: 'Save the date countdown ⏳',
-        description: 'Counting down the days!',
-        thumbnail: null,
-        url: '',
-        date: '2025-12-25',
-        views: '',
-        likes: '',
+        actionLabel: 'Open FAQ Page',
     },
 ];
 
@@ -177,24 +139,20 @@ const ytTextures = ['/engagement/IMG_8927.webp', '/engagement/IMG_8879.webp'];
 const ytPaintedTextures = ['/engagement/IMG_8927.webp', '/engagement/IMG_8879.webp'];
 const blogTextures = ['/engagement/IMG_8885.webp'];
 const blogPaintedTextures = ['/engagement/IMG_8885.webp'];
-const ttTextures = ['/engagement/IMG_8878.webp'];
-const ttPaintedTextures = ['/engagement/IMG_8878.webp'];
 
-let ytIdx = 0, blogIdx = 0, ttIdx = 0;
-let ytPIdx = 0, blogPIdx = 0, ttPIdx = 0;
+let ytIdx = 0, blogIdx = 0;
+let ytPIdx = 0, blogPIdx = 0;
 
 export const CONTENT_DATA = RAW_CONTENT_DATA.map((item) => {
     return {
         ...item,
         frontTexture: item.frontTexture || (
-            item.platform === 'youtube' ? ytTextures[ytIdx++ % ytTextures.length] :
-                item.platform === 'blog' ? blogTextures[blogIdx++ % blogTextures.length] :
-                    ttTextures[ttIdx++ % ttTextures.length]
+            item.platform === 'video' ? ytTextures[ytIdx++ % ytTextures.length] :
+                blogTextures[blogIdx++ % blogTextures.length]
         ),
         paintedFrontTexture: item.paintedFrontTexture || (
-            item.platform === 'youtube' ? ytPaintedTextures[ytPIdx++ % ytPaintedTextures.length] :
-                item.platform === 'blog' ? blogPaintedTextures[blogPIdx++ % blogPaintedTextures.length] :
-                    ttPaintedTextures[ttPIdx++ % ttPaintedTextures.length]
+            item.platform === 'video' ? ytPaintedTextures[ytPIdx++ % ytPaintedTextures.length] :
+                blogPaintedTextures[blogPIdx++ % blogPaintedTextures.length]
         )
     };
 });

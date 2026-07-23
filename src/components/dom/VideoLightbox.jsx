@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useScene } from '../../context/SceneContext';
+import { useAudio } from '../../context/AudioManager';
 import '../../styles/VideoLightbox.scss';
 
 const PROPOSAL_VIDEO_URL = '/engagement/proposal.mp4';
@@ -10,7 +11,18 @@ const PROPOSAL_VIDEO_URL = '/engagement/proposal.mp4';
  */
 const VideoLightbox = () => {
     const { videoLightboxOpen, closeVideoLightbox } = useScene();
+    const { suspendAmbientAudio, resumeAmbientAudio } = useAudio();
     const videoRef = useRef();
+
+    useEffect(() => {
+        if (videoLightboxOpen) {
+            suspendAmbientAudio();
+            return () => {
+                resumeAmbientAudio();
+            };
+        }
+        return undefined;
+    }, [videoLightboxOpen, suspendAmbientAudio, resumeAmbientAudio]);
 
     // Pause + rewind whenever the lightbox closes, so it starts fresh next time
     useEffect(() => {
@@ -49,6 +61,7 @@ const VideoLightbox = () => {
                     controls
                     autoPlay
                     playsInline
+                    preload="auto"
                 />
             </div>
         </div>

@@ -7,6 +7,7 @@ import SkyChunk, { CHUNK_LENGTH, ROOM_Z } from './SkyChunk';
 import { useScene } from '../../../../context/SceneContext';
 import '../../shaders/RevealBasicMaterial'; // Registers brush-stroke reveal for BasicMaterial
 import { isTouchDevice } from '../../../../utils/deviceDetect';
+import { getInfoPageBySlug } from '../../../../content/weddingInfoPages';
 
 // Reusable Vector3 to avoid allocations in event handlers
 const _tempVec3 = new THREE.Vector3();
@@ -22,6 +23,7 @@ const _tempVec3 = new THREE.Vector3();
 // Story milestones configuration
 // Each milestone appears once per "story cycle" (4 chunks = 160 units)
 const STORY_CYCLE_LENGTH = 160;
+const ABOUT_PDF_PAGE_SLUGS = ['basics', 'schedule', 'travel', 'accommodation', 'faq'];
 
 // === TWARDA LINIA ZANIKANIA DLA MILESTONES (WORLD SPACE) ===
 // Pokój About jest na Z = -25, więc -25 to drzwi pokoju
@@ -113,8 +115,75 @@ const InfiniteSkyManager = ({ scrollProgressRef }) => {
                         z={-(cycleIndex * STORY_CYCLE_LENGTH + 65)}
                         scrollProgressRef={scrollProgressRef}
                     />
+
+                    {ABOUT_PDF_PAGE_SLUGS.map((slug, idx) => (
+                        <EventDetailsPageMilestone
+                            key={`${cycleIndex}-${slug}`}
+                            slug={slug}
+                            z={-(cycleIndex * STORY_CYCLE_LENGTH + 95 + idx * 15)}
+                            scrollProgressRef={scrollProgressRef}
+                        />
+                    ))}
                 </group>
             ))}
+        </group>
+    );
+};
+
+const EventDetailsPageMilestone = ({ slug, z, scrollProgressRef }) => {
+    const groupRef = useRef();
+    const page = getInfoPageBySlug(slug);
+
+    useFrame((state) => {
+        if (!groupRef.current || !page) return;
+
+        const scrollProgress = scrollProgressRef?.current || 0;
+        const worldZ = ROOM_Z + scrollProgress + z;
+        groupRef.current.visible = worldZ < MILESTONE_CORRIDOR_CLIP_Z;
+        if (!groupRef.current.visible) return;
+
+        const t = state.clock.elapsedTime;
+        groupRef.current.position.y = Math.sin(t * 0.5 + z * 0.02) * 0.08;
+        groupRef.current.rotation.z = Math.sin(t * 0.2 + z * 0.01) * 0.02;
+    });
+
+    if (!page) return null;
+
+    const sectionText = page.sections
+        .map((section) => `${section.heading}:\n${section.lines.slice(0, 3).join('\n')}`)
+        .join('\n\n');
+
+    return (
+        <group ref={groupRef} position={[0, 0.8, z]}>
+            <mesh position={[0, 0, 0]}>
+                <planeGeometry args={[7.2, 5]} />
+                <meshBasicMaterial color="#f8f3e8" transparent opacity={0.96} side={THREE.DoubleSide} />
+            </mesh>
+
+            <Text
+                position={[0, 1.95, 0.02]}
+                fontSize={0.42}
+                color="#1f1f1f"
+                anchorX="center"
+                anchorY="middle"
+                font="/fonts/RubikScribble-Regular.ttf"
+            >
+                {page.title}
+            </Text>
+
+            <Text
+                position={[0, -0.15, 0.02]}
+                fontSize={0.18}
+                color="#2f2f2f"
+                anchorX="center"
+                anchorY="middle"
+                maxWidth={6.2}
+                lineHeight={1.4}
+                textAlign="left"
+                font="/fonts/CabinSketch-Regular.ttf"
+            >
+                {sectionText}
+            </Text>
         </group>
     );
 };

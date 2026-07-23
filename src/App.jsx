@@ -7,6 +7,7 @@ import Preloader from './components/dom/Preloader';
 import PaperTransition from './components/dom/PaperTransition';
 import GuestNameGate from './components/dom/GuestNameGate';
 import VideoLightbox from './components/dom/VideoLightbox';
+import InfoPageOverlay from './components/dom/InfoPageOverlay';
 import { AudioProvider, useAudio } from './context/AudioManager';
 import { initAudio } from './utils/audioManager';
 import { PerformanceProvider, usePerformance } from './context/PerformanceContext';
@@ -118,16 +119,21 @@ const PaperSceneBackground = () => {
 function DocumentMetaBridge() {
   useDocumentMeta();
 
-  const { initialRoom, deeplinkHandled, hasEntered, teleportTo, markEntered } = useScene();
+  const { initialRoom, initialInfoPage, deeplinkHandled, hasEntered, teleportTo, openInfoPage } = useScene();
 
   // Deep linking: if user lands on e.g. /gallery, auto-teleport after scene loads
   useEffect(() => {
     if (initialRoom && hasEntered && !deeplinkHandled.current) {
       deeplinkHandled.current = true;
       // Small delay to let the corridor render first
-      setTimeout(() => teleportTo(initialRoom), 300);
+      setTimeout(() => {
+        teleportTo(initialRoom);
+        if (initialInfoPage) {
+          openInfoPage(initialInfoPage);
+        }
+      }, 300);
     }
-  }, [initialRoom, hasEntered, teleportTo, deeplinkHandled]);
+  }, [initialRoom, initialInfoPage, hasEntered, teleportTo, openInfoPage, deeplinkHandled]);
 
   return null;
 }
@@ -220,6 +226,9 @@ function AppContent() {
 
           {/* Proposal video - shown when the couple's portrait is clicked */}
           <VideoLightbox />
+
+          {/* Structured wedding information pages (FAQ, travel, schedule, etc.) */}
+          <InfoPageOverlay />
         </div>
       </SceneProvider>
     </AudioProvider>

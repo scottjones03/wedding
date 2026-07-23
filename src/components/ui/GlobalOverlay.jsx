@@ -7,7 +7,7 @@ import '../../styles/GlobalOverlay.scss';
 gsap.registerPlugin(TextPlugin);
 
 const GlobalOverlay = () => {
-    const { overlayContent, closeOverlay } = useScene();
+    const { overlayContent, closeOverlay, openVideoLightbox, openInfoPage } = useScene();
     const [isVisible, setIsVisible] = useState(false);
     const [animateOpen, setAnimateOpen] = useState(false);
 
@@ -65,10 +65,29 @@ const GlobalOverlay = () => {
     const content = overlayContent || cachedContent || dummyGridContent;
 
     // Propagate animateOpen state to control CSS transitions
-    return <ContentCard content={content} isOpen={animateOpen} onClose={closeOverlay} isMobile={isMobile} />;
+    const handleAction = (url) => {
+        if (!url) return;
+
+        if (url.startsWith('video:')) {
+            closeOverlay();
+            openVideoLightbox();
+            return;
+        }
+
+        if (url.startsWith('page:')) {
+            const pageSlug = url.replace('page:', '').trim();
+            closeOverlay();
+            openInfoPage(pageSlug);
+            return;
+        }
+
+        window.open(url, '_blank', 'noopener,noreferrer');
+    };
+
+    return <ContentCard content={content} isOpen={animateOpen} onClose={closeOverlay} isMobile={isMobile} onAction={handleAction} />;
 };
 
-const ContentCard = ({ content, isOpen, onClose, isMobile }) => {
+const ContentCard = ({ content, isOpen, onClose, isMobile, onAction }) => {
     if (!content) return null;
 
     const label = content.platformConfig?.label || 'Content';
@@ -527,20 +546,21 @@ const ContentCard = ({ content, isOpen, onClose, isMobile }) => {
                             </p>
 
                             {/* Action Button */}
-                            <div style={{
-                                marginTop: 'auto',
-                                paddingTop: '1rem',
-                                ...getStaggerStyle(400)
-                            }}>
-                                <a
-                                    href={content.url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="studio-action-button"
-                                >
-                                    Open Link ↗
-                                </a>
-                            </div>
+                            {content.url && (
+                                <div style={{
+                                    marginTop: 'auto',
+                                    paddingTop: '1rem',
+                                    ...getStaggerStyle(400)
+                                }}>
+                                    <button
+                                        type="button"
+                                        className="studio-action-button"
+                                        onClick={() => onAction(content.url)}
+                                    >
+                                        {content.actionLabel || (content.url.startsWith('page:') ? 'Open Details' : 'Open Link ↗')}
+                                    </button>
+                                </div>
+                            )}
                         </>
                     )}
                 </div>

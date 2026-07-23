@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useScene } from '../context/SceneContext';
+import { getInfoPageBySlug } from '../content/weddingInfoPages';
 
 /**
  * useDocumentMeta — Dynamic Meta Tags & Virtual Routing (History API)
@@ -52,18 +53,39 @@ const PATH_TO_ROOM = {
  */
 export function getInitialRoomFromUrl() {
     const path = window.location.pathname.replace(/\/+$/, '') || '/';
+    if (path.startsWith('/gallery/')) return 'gallery';
+    if (path.startsWith('/about/')) return 'about';
     return PATH_TO_ROOM[path] !== undefined ? PATH_TO_ROOM[path] : null;
 }
 
+export function getInitialInfoPageFromUrl() {
+    const path = window.location.pathname.replace(/\/+$/, '') || '/';
+    const galleryMatch = path.match(/^\/gallery\/([^/]+)$/);
+    if (galleryMatch) return galleryMatch[1];
+
+    const aboutMatch = path.match(/^\/about\/([^/]+)$/);
+    if (aboutMatch) return aboutMatch[1];
+
+    return null;
+}
+
 export function useDocumentMeta() {
-    const { currentRoom, teleportTo, hasEntered } = useScene();
+    const { currentRoom, infoPageSlug, teleportTo, hasEntered, openInfoPage, closeInfoPage } = useScene();
     const isHandlingPopState = useRef(false);
     const lastPushedRoom = useRef(undefined); // Track what we last pushed to avoid duplicates
 
     // Update document meta and URL when room changes
     useEffect(() => {
         const roomKey = currentRoom === null ? 'null' : currentRoom;
-        const meta = ROOM_META[roomKey] || ROOM_META['null'];
+        const baseMeta = ROOM_META[roomKey] || ROOM_META['null'];
+        const infoPage = infoPageSlug ? getInfoPageBySlug(infoPageSlug) : null;
+
+        const meta = infoPage ? {
+            ...baseMeta,
+            path: `/${infoPage.room}/${infoPage.slug}`,
+            title: `${infoPage.title} — Scott & Georgina's Wedding`,
+            description: infoPage.description,
+        } : baseMeta;
 
         // Update the page title
         document.title = meta.title;
@@ -91,25 +113,33 @@ export function useDocumentMeta() {
         }
 
         // Push to browser history (only if not handling a popstate event and room actually changed)
-        if (!isHandlingPopState.current && lastPushedRoom.current !== currentRoom) {
+        const historyKey = infoPage ? `${currentRoom}:${infoPage.slug}` : `${currentRoom}`;
+        if (!isHandlingPopState.current && lastPushedRoom.current !== historyKey) {
             // Use replaceState for the very first load, pushState for subsequent navigations
             if (lastPushedRoom.current === undefined) {
-                window.history.replaceState({ room: currentRoom }, '', meta.path);
+                window.history.replaceState({ room: currentRoom, infoPage: infoPageSlug || null }, '', meta.path);
             } else {
-                window.history.pushState({ room: currentRoom }, '', meta.path);
+                window.history.pushState({ room: currentRoom, infoPage: infoPageSlug || null }, '', meta.path);
             }
-            lastPushedRoom.current = currentRoom;
+            lastPushedRoom.current = historyKey;
         }
 
         isHandlingPopState.current = false;
-    }, [currentRoom]);
+    }, [currentRoom, infoPageSlug]);
 
     // Handle browser back/forward buttons
     useEffect(() => {
         const handlePopState = (event) => {
             isHandlingPopState.current = true;
             const targetRoom = event.state?.room ?? null;
-            lastPushedRoom.current = targetRoom;
+            const targetInfoPage = event.state?.infoPage ?? null;
+            lastPushedRoom.current = targetInfoPage ? `${targetRoom}:${targetInfoPage}` : `${targetRoom}`;
+
+            if (targetInfoPage) {
+                openInfoPage(targetInfoPage);
+            } else {
+                closeInfoPage();
+            }
 
             if (targetRoom === null) {
                 // Going back to corridor — we don't teleport, just need to trigger exit
@@ -125,5 +155,5 @@ export function useDocumentMeta() {
 
         window.addEventListener('popstate', handlePopState);
         return () => window.removeEventListener('popstate', handlePopState);
-    }, [teleportTo, hasEntered]);
+    }, [teleportTo, hasEntered, openInfoPage, closeInfoPage]);
 }

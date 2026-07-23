@@ -1,5 +1,7 @@
 import { createContext, useContext, useState, useCallback, useMemo, useRef } from 'react';
-import { getInitialRoomFromUrl } from '../hooks/useDocumentMeta';
+import { getInitialRoomFromUrl, getInitialInfoPageFromUrl } from '../hooks/useDocumentMeta';
+import { getInfoPageBySlug } from '../content/weddingInfoPages';
+import { getGuestTypeForName } from '../config/guestList';
 
 const SceneContext = createContext(null);
 
@@ -14,6 +16,7 @@ export const useScene = () => {
 export const SceneProvider = ({ children }) => {
     // Deep linking: check if URL points to a specific room on first load
     const initialRoom = useRef(getInitialRoomFromUrl());
+    const initialInfoPage = useRef(getInitialInfoPageFromUrl());
     const deeplinkHandled = useRef(false);
 
     const [currentRoom, setCurrentRoom] = useState(null); // null = corridor, 'about', 'portfolio', etc.
@@ -37,9 +40,17 @@ export const SceneProvider = ({ children }) => {
         }
     });
     const [showGuestGate, setShowGuestGate] = useState(false);
+    const [guestType, setGuestType] = useState(() => {
+        try {
+            return localStorage.getItem('portfolio_guest_type') || null;
+        } catch {
+            return null;
+        }
+    });
 
     // Proposal video lightbox - opened by clicking the couple's portrait
     const [videoLightboxOpen, setVideoLightboxOpen] = useState(false);
+    const [infoPageSlug, setInfoPageSlug] = useState(initialInfoPage.current);
 
     // Inspecting state removed to avoid global re-renders
 
@@ -60,12 +71,14 @@ export const SceneProvider = ({ children }) => {
         setCurrentRoom(null);
         setExitRequested(false);
         setOverlayContent(null);
+        setInfoPageSlug(null);
     }, []);
 
     // Request exit - this signals to DoorSection to trigger exit animation
     const requestExit = useCallback(() => {
         setExitRequested(true);
         setOverlayContent(null);
+        setInfoPageSlug(null);
     }, []);
 
     // Clear exit request - called by DoorSection after handling
@@ -84,10 +97,14 @@ export const SceneProvider = ({ children }) => {
 
     // Called by the gate once a typed name matches the guest list
     const verifyGuest = useCallback((name) => {
+        const type = getGuestTypeForName(name) || 'day';
+
         setGuestVerified(true);
+        setGuestType(type);
         try {
             localStorage.setItem('portfolio_guest_verified', 'true');
             localStorage.setItem('portfolio_guest_name', name);
+            localStorage.setItem('portfolio_guest_type', type);
         } catch {
             // localStorage unavailable (private browsing etc.) - just keep it in memory for this session
         }
@@ -128,6 +145,20 @@ export const SceneProvider = ({ children }) => {
         setTeleportPhase('closing'); // Paper starts closing
         setOverlayContent(null);
     }, [isTeleporting, currentRoom]);
+
+    const openInfoPage = useCallback((slug) => {
+        const page = getInfoPageBySlug(slug);
+        if (!page) return;
+
+        setInfoPageSlug(slug);
+        if (page.room && page.room !== currentRoom) {
+            teleportTo(page.room);
+        }
+    }, [currentRoom, teleportTo]);
+
+    const closeInfoPage = useCallback(() => {
+        setInfoPageSlug(null);
+    }, []);
 
     // Called when paper close animation completes - actually move camera
     const startTeleportTransition = useCallback(() => {
@@ -195,6 +226,7 @@ export const SceneProvider = ({ children }) => {
         isInRoom: currentRoom !== null,
         // Guest name-gate
         guestVerified,
+        guestType,
         showGuestGate,
         requestGuestVerification,
         verifyGuest,
@@ -203,8 +235,13 @@ export const SceneProvider = ({ children }) => {
         videoLightboxOpen,
         openVideoLightbox,
         closeVideoLightbox,
+        // Wedding info pages
+        infoPageSlug,
+        openInfoPage,
+        closeInfoPage,
         // Deep linking
         initialRoom: initialRoom.current,
+        initialInfoPage: initialInfoPage.current,
         deeplinkHandled,
         // Teleportation
         teleportTarget,
@@ -233,6 +270,7 @@ export const SceneProvider = ({ children }) => {
         closeOverlay,
         // Guest name-gate dependencies
         guestVerified,
+        guestType,
         showGuestGate,
         requestGuestVerification,
         verifyGuest,
@@ -241,6 +279,9 @@ export const SceneProvider = ({ children }) => {
         videoLightboxOpen,
         openVideoLightbox,
         closeVideoLightbox,
+        infoPageSlug,
+        openInfoPage,
+        closeInfoPage,
         // Teleportation dependencies
         teleportTarget,
         isTeleporting,

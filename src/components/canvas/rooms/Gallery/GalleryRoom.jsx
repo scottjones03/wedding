@@ -41,29 +41,29 @@ const FALLBACK_PROJECTS = [
         title: 'HOW WE MET',
         front: '/textures/gallery/monetuneprzod.webp',
         painted: '/textures/gallery/monetuneprzod_painted.webp',
-        url: '',
+        url: 'page:our-story',
         detailsHeading: 'HOW WE MET:',
         description: "Scott and Georgina first met in Chemistry class in 2020, started dating on 16th December 2020, moved in together in August 2025, and got engaged on the 15th of May 2026 \u2014 Gina's birthday.",
         techStack: []
     },
     {
         id: 'the-proposal',
-        title: 'THE PROPOSAL',
+        title: 'TRAVEL DETAILS',
         front: '/textures/gallery/timberkittyprzod.webp',
         painted: '/textures/gallery/timberkittyprzod_painted.webp',
-        url: '',
-        detailsHeading: 'THE PROPOSAL:',
-        description: "We got engaged at 11am in the Fellows' Garden at Christ's College, Cambridge, then flew off to Portugal on holiday straight after. Christ's College Choir surprised us with a singing quartet.",
+        url: 'page:travel',
+        detailsHeading: 'TRAVEL:',
+        description: 'Airports, rail routes, and local taxi guidance for getting to and from Holmewood Hall.',
         techStack: []
     },
     {
         id: 'save-the-date',
-        title: 'SAVE THE DATE',
+        title: 'STAY + FAQ',
         front: '/textures/gallery/bioprzod.webp',
         painted: '/textures/gallery/bioprzod_painted.webp',
-        url: '',
-        detailsHeading: 'THE DETAILS:',
-        description: "Saturday 11th May 2027 at Holmewood Hall, Cambridgeshire. Hotel check-in from 12pm, ceremony at 2pm, day guests' food at 4pm, first dance and evening guests at 7pm, then partying until midnight!",
+        url: 'page:accommodation',
+        detailsHeading: 'ACCOMMODATION:',
+        description: 'Hotel blocks, nearby lodge requests, parking notes, and quick logistics guidance.',
         techStack: []
     },
 ];
@@ -77,7 +77,7 @@ const GAP = 2.5;
 const RIGHT_CROP_AMOUNT = 0.2;
 
 const GalleryRoom = ({ showRoom, onReady, isExiting, isWarmup }) => {
-    const { openOverlay, isTeleporting } = useScene();
+    const { openOverlay, isTeleporting, openInfoPage } = useScene();
     const { globalVolume, isMuted } = useAudio();
     const effectiveVolume = isMuted ? 0 : AUDIO_SETTINGS.volume * globalVolume;
 
@@ -466,6 +466,7 @@ const GalleryRoom = ({ showRoom, onReady, isExiting, isWarmup }) => {
                             isSelected={selectedCard === i}
                             scrollToIndex={scrollToIndex}
                             onClick={handleCardClick}
+                            onOpenPage={openInfoPage}
                             isMobile={!canHover} // Use hover capability for mobile behavior logic
                             isTransitioning={isTransitioning} // Pass down to lock out individual pointer events just in case
                             paintProgress={uniformsData.uPaintProgress}
@@ -519,7 +520,7 @@ const GalleryRoom = ({ showRoom, onReady, isExiting, isWarmup }) => {
 };
 
 // Sub-component for individual project cards
-const ProjectCard = memo(forwardRef(({ index, project, currentScroll, materials, curve, isSelected, scrollToIndex, onClick, isMobile, isTransitioning, paintProgress, roomOrigin }, ref) => {
+const ProjectCard = memo(forwardRef(({ index, project, currentScroll, materials, curve, isSelected, scrollToIndex, onClick, onOpenPage, isMobile, isTransitioning, paintProgress, roomOrigin }, ref) => {
     const cardRef = useRef();
     const paperRef = useRef(); // Ref for the moving part (Paper)
     const materialRef = useRef();
@@ -984,7 +985,12 @@ const ProjectCard = memo(forwardRef(({ index, project, currentScroll, materials,
                             if (!isSelected || isTransitioning) return;
                             e.stopPropagation();
                             if (hasUrl) {
-                                window.open(project.url, '_blank');
+                                if (project.url.startsWith('page:')) {
+                                    const pageSlug = project.url.replace('page:', '').trim();
+                                    onOpenPage?.(pageSlug);
+                                } else {
+                                    window.open(project.url, '_blank');
+                                }
                             } else if (onClick) {
                                 onClick(index);
                             }

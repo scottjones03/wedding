@@ -11,10 +11,17 @@
 // NOTE: This is a friendly guest-list check for a wedding invite site, not
 // real security - the list ships in the site's JS bundle, so don't put
 // anything sensitive here (just names).
-export const GUEST_LIST = [
-    // TODO: replace these placeholders with your real guest list
+export const DAY_GUEST_LIST = [
+    // TODO: replace these placeholders with your real day guest list
     'Guest Name',
 ];
+
+export const NIGHT_GUEST_LIST = [
+    // TODO: replace these placeholders with your real evening guest list
+    'Guest Name (Night)',
+];
+
+export const GUEST_LIST = [...DAY_GUEST_LIST, ...NIGHT_GUEST_LIST];
 
 /**
  * Checks whether a typed name matches an entry on the guest list.
@@ -27,4 +34,21 @@ export function isGuestOnList(name) {
     return GUEST_LIST.some(
         (guest) => String(guest).trim().toLowerCase().replace(/\s+/g, ' ') === normalized
     );
+}
+
+export function getGuestTypeForName(name) {
+    const normalized = String(name || '').trim().toLowerCase().replace(/\s+/g, ' ');
+    if (!normalized) return null;
+
+    const isDayGuest = DAY_GUEST_LIST.some(
+        (guest) => String(guest).trim().toLowerCase().replace(/\s+/g, ' ') === normalized
+    );
+    if (isDayGuest) return 'day';
+
+    const isNightGuest = NIGHT_GUEST_LIST.some(
+        (guest) => String(guest).trim().toLowerCase().replace(/\s+/g, ' ') === normalized
+    );
+    if (isNightGuest) return 'night';
+
+    return null;
 }
