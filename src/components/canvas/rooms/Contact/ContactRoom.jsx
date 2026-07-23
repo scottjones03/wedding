@@ -375,7 +375,7 @@ const ContactRoom = ({ showRoom, onReady, isExiting, isWarmup }) => {
             {/* 🛢️ SOCIAL BARRELS (Floating in water) */}
             {/* LINKEDIN */}
             <SocialBarrel
-                position={isMobile ? [-1.2, 0.5, -14] : [-3, 0.5, -14]}
+                position={isMobile ? [-1.2, 2.1, -14] : [-3, 2.1, -14]}
                 rotation={[0, 0.2, 0]}
                 texturePath="/textures/contact/beczka.webp"
                 label="VENUE WEBSITE"
@@ -385,7 +385,7 @@ const ContactRoom = ({ showRoom, onReady, isExiting, isWarmup }) => {
             />
             {/* PHOTOS (shared album) */}
             <SocialBarrel
-                position={isMobile ? [-1.5, -0.3, -11] : [-5, -0.3, -12]}
+                position={isMobile ? [-1.5, 1.3, -11] : [-5, 1.3, -12]}
                 rotation={[0, 0.3, 0]}
                 texturePath="/textures/contact/beczka.webp"
                 label="PHOTOS"
@@ -397,7 +397,7 @@ const ContactRoom = ({ showRoom, onReady, isExiting, isWarmup }) => {
     
             {/* INSTAGRAM */}
             <SocialBarrel
-                position={isMobile ? [1.5, -0.3, -11] : [5, -0.3, -12]}
+                position={isMobile ? [1.5, 1.3, -11] : [5, 1.3, -12]}
                 rotation={[0, -0.3, 0]}
                 texturePath="/textures/contact/beczka.webp"
                 label="INSTAGRAM"
