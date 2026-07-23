@@ -177,7 +177,7 @@ const EntranceDoors = ({
     // Handle hover/tap - doors slightly open to indicate interactivity.
     // Works for both mouse hover (desktop) and touch (mobile), since r3f
     // fires the same pointer events for both.
-    const handlePointerEnter = () => {
+    const handlePointerEnter = (e) => {
         if (isOpen || isAnimating) return;
         setIsHovered(true);
         document.body.style.cursor = "pointer";
@@ -253,8 +253,14 @@ const EntranceDoors = ({
         if (rightHandlePaintedRef.current) rightHandlePaintedRef.current.visible = true;
     };
 
-    const handlePointerLeave = () => {
+    const handlePointerLeave = (e) => {
         if (isOpen || isAnimating) return;
+        // On touch devices, a tap synthesizes pointerenter then pointerleave back
+        // to back (as the finger lifts) just before the click fires - reversing
+        // the paint-reveal tween that fast means it never becomes visible. Mouse
+        // users genuinely hover-then-leave, so only skip the reversal for touch.
+        const pointerType = e?.pointerType || e?.nativeEvent?.pointerType;
+        if (pointerType === 'touch') return;
         setIsHovered(false);
         document.body.style.cursor = "auto";
 

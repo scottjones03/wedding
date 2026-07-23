@@ -286,21 +286,25 @@ const MessagePaper = ({ position = [0, 0.05, 2], onSend }) => {
         const uvY = e.uv.y;
 
         // Fallback selection logic based on UV if hitboxes are missed
+        // Focus must happen synchronously within this click/tap handler (not via
+        // setTimeout) or mobile Safari/Chrome will refuse to pop up the virtual
+        // keyboard, since it only honors focus() calls made directly inside the
+        // original user-gesture event.
         if (uvY > 0.82) {
             setActiveField('email');
-            setTimeout(() => emailInputRef.current?.focus(), 10);
+            emailInputRef.current?.focus();
         } else if (uvY > 0.68) {
             setActiveField('subject');
-            setTimeout(() => plusOnesInputRef.current?.focus(), 10);
+            plusOnesInputRef.current?.focus();
         } else if (uvY > 0.58) {
             setActiveField('plusOneNotes');
-            setTimeout(() => plusOneNotesInputRef.current?.focus(), 10);
+            plusOneNotesInputRef.current?.focus();
         } else if (uvY > 0.48) {
             setActiveField('stayRequest');
-            setTimeout(() => stayRequestInputRef.current?.focus(), 10);
+            stayRequestInputRef.current?.focus();
         } else if (uvY > 0.18) {
             setActiveField('message');
-            setTimeout(() => dietaryInputRef.current?.focus(), 10);
+            dietaryInputRef.current?.focus();
         }
     }, []);
 
@@ -615,7 +619,7 @@ const MessagePaper = ({ position = [0, 0.05, 2], onSend }) => {
                     value={email}
                     placeholder="your email..."
                     cursor={cursorVisible ? '|' : ' '}
-                    onClick={() => { setActiveField('email'); setTimeout(() => emailInputRef.current?.focus(), 10); }}
+                    onClick={() => { setActiveField('email'); emailInputRef.current?.focus(); }}
                     // Layout
                     position={[-0.5, 0.008, -0.61]}
                     baseRotation={[-Math.PI / 2, 0, 0.02]}
@@ -633,7 +637,7 @@ const MessagePaper = ({ position = [0, 0.05, 2], onSend }) => {
                     value={plusOnes}
                     placeholder="plus-ones requested (optional, 0 if none)..."
                     cursor={cursorVisible ? '|' : ' '}
-                    onClick={() => { setActiveField('subject'); setTimeout(() => plusOnesInputRef.current?.focus(), 10); }}
+                    onClick={() => { setActiveField('subject'); plusOnesInputRef.current?.focus(); }}
                     // Layout
                     position={[-0.5, 0.008, -0.46]}
                     baseRotation={[-Math.PI / 2, 0, 0.02]}
@@ -650,7 +654,7 @@ const MessagePaper = ({ position = [0, 0.05, 2], onSend }) => {
                     value={plusOneNotes}
                     placeholder="plus-one names or relationship (optional)..."
                     cursor={cursorVisible ? '|' : ' '}
-                    onClick={() => { setActiveField('plusOneNotes'); setTimeout(() => plusOneNotesInputRef.current?.focus(), 10); }}
+                    onClick={() => { setActiveField('plusOneNotes'); plusOneNotesInputRef.current?.focus(); }}
                     position={[-0.5, 0.008, -0.26]}
                     baseRotation={[-Math.PI / 2, 0, 0.02]}
                     hitboxPosition={[0, 0.005, -0.26]}
@@ -665,7 +669,7 @@ const MessagePaper = ({ position = [0, 0.05, 2], onSend }) => {
                     value={stayRequest}
                     placeholder="room / nearby lodge request (optional)..."
                     cursor={cursorVisible ? '|' : ' '}
-                    onClick={() => { setActiveField('stayRequest'); setTimeout(() => stayRequestInputRef.current?.focus(), 10); }}
+                    onClick={() => { setActiveField('stayRequest'); stayRequestInputRef.current?.focus(); }}
                     position={[-0.5, 0.008, -0.15]}
                     baseRotation={[-Math.PI / 2, 0, 0.02]}
                     hitboxPosition={[0, 0.005, -0.15]}
@@ -681,7 +685,7 @@ const MessagePaper = ({ position = [0, 0.05, 2], onSend }) => {
                     value={formattedMessage}
                     placeholder="dietary requirements or extra notes (optional)..."
                     cursor={cursorVisible ? '|' : ' '}
-                    onClick={() => { setActiveField('message'); setTimeout(() => dietaryInputRef.current?.focus(), 10); }}
+                    onClick={() => { setActiveField('message'); dietaryInputRef.current?.focus(); }}
                     // Layout
                     position={[-0.5, 0.008, -0.08]}
                     baseRotation={[-Math.PI / 2, 0, 0.02]}

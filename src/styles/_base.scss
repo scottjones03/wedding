@@ -31,10 +31,6 @@ body {
     color: $color-black;
     overflow: hidden; // No scroll - 3D handles it
     overscroll-behavior: none;
-    // Let JS (GSAP Observer / touch handlers) own all touch gestures instead of
-    // the browser's native pan/refresh/zoom handling, which was previously
-    // causing swipes on mobile to bounce-scroll or pull-to-refresh the page.
-    touch-action: none;
     @include smooth-text;
     @include hide-scrollbar;
 }
@@ -46,10 +42,17 @@ body {
     height: 100dvh;
     position: relative;
     overflow: hidden;
-    touch-action: none;
 }
 
 // Canvas wrapper
+// touch-action: none lives here (not on body/.app) so JS (GSAP Observer / touch
+// handlers) owns touch gestures over the 3D scene without the browser's native
+// pan/refresh/zoom fighting it - but UI overlays outside the canvas (nav buttons,
+// audio volume sliders, RSVP inputs) keep normal touch-action so their native
+// tap/drag interactions (e.g. dragging a <input type="range"> thumb) still work.
+// touch-action is NOT purely inherited: an ancestor set to "none" would otherwise
+// restrict all descendants regardless of what they set, which previously broke
+// the audio volume sliders on touch.
 .canvas-wrapper {
     position: absolute;
     inset: 0;
