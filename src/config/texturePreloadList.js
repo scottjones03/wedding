@@ -154,7 +154,6 @@ export const GALLERY_TEXTURES = [
 export const CONTACT_TEXTURES = [
     '/textures/contact/faletopdown.webp',
     '/textures/contact/molo.webp',
-    '/textures/contact/latarnia.webp',
     '/textures/contact/statek.webp',
     '/textures/contact/paper_form.webp',
     '/textures/contact/send_button.webp',

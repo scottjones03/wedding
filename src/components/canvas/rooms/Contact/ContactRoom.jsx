@@ -36,21 +36,6 @@ export const AUDIO_SETTINGS = {
 };
 
 // ============================================
-// ⚙️ LATARNIA SETTINGS - TWEAK HERE
-// Edytuj te wartości, aby zmienić pozycję, obrót i wielkość latarni
-// ============================================
-export const LATARNIA_SETTINGS = {
-    // Pozycja: [lewo/prawo (X), góra/dół (Y), tył/przód (Z)]
-    position: [-10, 5, -20],
-
-    // Rotacja: [przechył w przód/tył (X), obrót w lewo/prawo (Y), obrót na boki (Z)]
-    rotation: [0, 0.1, 0],
-
-    // Wielkość: [szerokość, wysokość]
-    scale: [4.49, 5] // Legacy ratio 1102/1225
-};
-
-// ============================================
 // ⚙️ STATEK SETTINGS - TWEAK HERE
 // Edytuj te wartości, aby zmienić pozycję, obrót i wielkość statku
 // ============================================
@@ -113,8 +98,6 @@ const ContactRoom = ({ showRoom, onReady, isExiting, isWarmup }) => {
     const seaTexture = useTexture("/textures/contact/faletopdown.webp");
     // Load Molo Texture
     const moloTexture = useTexture("/textures/contact/molo.webp");
-    // Load Latarnia Texture
-    const latarniaTexture = useTexture("/textures/contact/latarnia.webp");
     // Load Statek Texture
     const statekTexture = useTexture("/textures/contact/statek.webp");
 
@@ -392,7 +375,7 @@ const ContactRoom = ({ showRoom, onReady, isExiting, isWarmup }) => {
             {/* 🛢️ SOCIAL BARRELS (Floating in water) */}
             {/* LINKEDIN */}
             <SocialBarrel
-                position={isMobile ? [-1.2, 0.5, -10] : [-3, 0.5, -10]}
+                position={isMobile ? [-1.2, 0.5, -14] : [-3, 0.5, -14]}
                 rotation={[0, 0.2, 0]}
                 texturePath="/textures/contact/beczka.webp"
                 label="VENUE WEBSITE"
@@ -402,7 +385,7 @@ const ContactRoom = ({ showRoom, onReady, isExiting, isWarmup }) => {
             />
             {/* PHOTOS (shared album) */}
             <SocialBarrel
-                position={isMobile ? [-1.5, -0.3, -7] : [-5, -0.3, -8]}
+                position={isMobile ? [-1.5, -0.3, -11] : [-5, -0.3, -12]}
                 rotation={[0, 0.3, 0]}
                 texturePath="/textures/contact/beczka.webp"
                 label="PHOTOS"
@@ -414,7 +397,7 @@ const ContactRoom = ({ showRoom, onReady, isExiting, isWarmup }) => {
     
             {/* INSTAGRAM */}
             <SocialBarrel
-                position={isMobile ? [1.5, -0.3, -7] : [5, -0.3, -8]}
+                position={isMobile ? [1.5, -0.3, -11] : [5, -0.3, -12]}
                 rotation={[0, -0.3, 0]}
                 texturePath="/textures/contact/beczka.webp"
                 label="INSTAGRAM"
@@ -450,22 +433,7 @@ const ContactRoom = ({ showRoom, onReady, isExiting, isWarmup }) => {
                 />
             </mesh>
 
-            {/* 🗼 LATARNIA (LIGHTHOUSE) */}
-            <mesh
-                position={LATARNIA_SETTINGS.position}
-                rotation={LATARNIA_SETTINGS.rotation}
-            >
-                <planeGeometry args={LATARNIA_SETTINGS.scale} />
-                <meshBasicMaterial color="#e0e0e0"
-                    map={latarniaTexture}
-                    transparent
-                    alphaTest={0.5}
-                    side={THREE.DoubleSide}
-                    onBeforeCompile={onBeforeCompile}
-                />
-            </mesh>
-
-            {/* 🚢 STATEK (SHIP) */}
+            {/*  STATEK (SHIP) */}
             <mesh
                 ref={statekRef}
                 position={STATEK_SETTINGS.position}
