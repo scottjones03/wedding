@@ -7,7 +7,6 @@ import RoomInterior from './RoomInterior';
 import '../shaders/RevealMaterial'; // Registers alpha-discard reveal shader
 import { useScene } from '../../../context/SceneContext';
 import { useAudio } from '../../../context/AudioManager';
-import { isTouchDevice } from '../../../utils/deviceDetect';
 
 // Constants from CorridorSegment
 const WALL_X_OUTER = 3.5;
@@ -209,14 +208,14 @@ const DoorSection = ({
     const doorTexturePath = DOOR_TEXTURES[roomId] || DOOR_TEXTURES.gallery;
     const doorTexture = useTexture(doorTexturePath);
 
-    const isTouch = isTouchDevice();
-    const dummyTex = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
-
+    // Painted door/handle textures are small (recompressed) so we load them on
+    // all devices - the brush-stroke paint reveal now works on touch too, not
+    // just mouse hover.
     const doorPaintedTexturePath = DOOR_PAINTED_TEXTURES[roomId] || DOOR_PAINTED_TEXTURES.gallery;
-    const doorPaintedTexture = useTexture(isTouch ? dummyTex : doorPaintedTexturePath);
+    const doorPaintedTexture = useTexture(doorPaintedTexturePath);
     const frameTexture = useTexture('/textures/corridor/doors/ramkasingledoors.webp');
     const handleTexture = useTexture('/textures/corridor/doors/klamkadodrzwi.webp');
-    const handlePaintedTexture = useTexture(isTouch ? dummyTex : '/textures/corridor/doors/klamkadodrzwi_painted.webp');
+    const handlePaintedTexture = useTexture('/textures/corridor/doors/klamkadodrzwi_painted.webp');
     const doorBackTexture = useTexture('/textures/corridor/doors/backsingledoors.webp');
     const arrowTexture = useTexture('/textures/corridor/strzalka.webp');
 
@@ -816,7 +815,8 @@ const DoorSection = ({
         });
     }, [isOpen]);
 
-    // Handle hover effects
+    // Handle hover/tap effects - works for both mouse hover (desktop) and touch
+    // (mobile), since r3f fires the same pointer events for both.
     const handlePointerEnter = () => {
         if (isOpen || isAnimating) return;
         setIsHovered(true);
@@ -875,8 +875,14 @@ const DoorSection = ({
         if (doorPaintedRef.current) doorPaintedRef.current.visible = true;
     };
 
-    const handlePointerLeave = () => {
+    const handlePointerLeave = (e) => {
         if (isOpen || isAnimating) return;
+        // On touch devices, a tap synthesizes pointerenter then pointerleave back
+        // to back (as the finger lifts) just before the click fires - reversing
+        // the paint-reveal tween that fast means it never becomes visible. Mouse
+        // users genuinely hover-then-leave, so only skip the reversal for touch.
+        const pointerType = e?.pointerType || e?.nativeEvent?.pointerType;
+        if (pointerType === 'touch') return;
         setIsHovered(false);
         document.body.style.cursor = "auto";
 
