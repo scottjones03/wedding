@@ -23,8 +23,8 @@ export const AUDIO_SETTINGS = {
 const AboutRoom = ({ showRoom, onReady, isExiting, isWarmup }) => {
     const { camera } = useThree();
     const { isTeleporting, overlayContent } = useScene();
-    const { globalVolume, isMuted } = useAudio();
-    const effectiveVolume = isMuted ? 0 : AUDIO_SETTINGS.volume * globalVolume;
+    const { globalVolume, isMuted, isAmbientSuspended } = useAudio();
+    const effectiveVolume = isMuted || isAmbientSuspended ? 0 : AUDIO_SETTINGS.volume * globalVolume;
 
     const audioRef = useRef();
     useEffect(() => {
@@ -72,6 +72,17 @@ const AboutRoom = ({ showRoom, onReady, isExiting, isWarmup }) => {
             scrollVelocity.current = 0;
         }
     }, [isTeleporting]);
+
+    useEffect(() => {
+        if (!showRoom) return;
+
+        // Always start About from the first milestone (SCOTT & GEORGINA intro).
+        scrollPosition.current = 0;
+        scrollVelocity.current = 0;
+        currentBank.current = 0;
+        currentPitch.current = 0;
+        isFlightActive.current = false;
+    }, [showRoom]);
 
     // Ready detection + flight animation
     useFrame((state, delta) => {

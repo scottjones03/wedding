@@ -703,7 +703,7 @@ const MessagePaper = ({ position = [0, 0.05, 2], onSend }) => {
                 <InteractiveTextField
                     isActive={activeField === 'subject'}
                     value={plusOnes}
-                    placeholder="requested number of plus ones (e.g. 2)... no guarantee, but we will do our best to accommodate!"
+                    placeholder="plus-ones requested (0 if none)..."
                     cursor={cursorVisible ? '|' : ' '}
                     onClick={() => { setActiveField('subject'); setTimeout(() => plusOnesInputRef.current?.focus(), 10); }}
                     // Layout
@@ -720,12 +720,12 @@ const MessagePaper = ({ position = [0, 0.05, 2], onSend }) => {
                 <InteractiveTextField
                     isActive={activeField === 'plusOneNotes'}
                     value={plusOneNotes}
-                    placeholder="plus-one names/relationship (special request)..."
+                    placeholder="plus-one names or relationship (optional)..."
                     cursor={cursorVisible ? '|' : ' '}
                     onClick={() => { setActiveField('plusOneNotes'); setTimeout(() => plusOneNotesInputRef.current?.focus(), 10); }}
-                    position={[-0.5, 0.008, -0.34]}
+                    position={[-0.5, 0.008, -0.29]}
                     baseRotation={[-Math.PI / 2, 0, 0.02]}
-                    hitboxPosition={[0, 0.005, -0.34]}
+                    hitboxPosition={[0, 0.005, -0.29]}
                     hitboxSize={[PAPER_WIDTH * 0.85, 0.08]}
                     fontSize={0.04}
                     maxWidth={PAPER_WIDTH * 0.8}
@@ -769,9 +769,9 @@ const MessagePaper = ({ position = [0, 0.05, 2], onSend }) => {
                 />
 
                 <Text
-                    position={[-0.5, 0.02, 0.36]}
+                    position={[-0.5, 0.02, 0.21]}
                     rotation={[-Math.PI / 2, 0, 0]}
-                    fontSize={0.038}
+                    fontSize={0.031}
                     color="#333333"
                     font={FONT_PATH}
                     anchorX="left"
@@ -781,14 +781,14 @@ const MessagePaper = ({ position = [0, 0.05, 2], onSend }) => {
                         if (guestType !== 'day') setAttendanceType('evening');
                     }}
                 >
-                    {guestType === 'day' ? 'Attendance: Full day (fixed for day guests)' : `Attendance: ${attendanceType === 'day' ? 'Full day' : 'Evening only'}`}
+                    {guestType === 'day' ? 'Attendance: Full day (day guest)' : `Attendance: ${attendanceType === 'day' ? 'Full day' : 'Evening only'}`}
                 </Text>
 
                 {guestType !== 'day' && (
                     <Text
-                        position={[0.05, 0.02, 0.36]}
+                        position={[0.18, 0.02, 0.21]}
                         rotation={[-Math.PI / 2, 0, 0]}
-                        fontSize={0.032}
+                        fontSize={0.028}
                         color="#333333"
                         font={FONT_PATH}
                         anchorX="left"
@@ -803,9 +803,9 @@ const MessagePaper = ({ position = [0, 0.05, 2], onSend }) => {
                 )}
 
                 <Text
-                    position={[-0.5, 0.02, 0.46]}
+                    position={[-0.5, 0.02, 0.36]}
                     rotation={[-Math.PI / 2, 0, 0]}
-                    fontSize={0.035}
+                    fontSize={0.031}
                     color="#333333"
                     font={FONT_PATH}
                     anchorX="left"
@@ -815,13 +815,13 @@ const MessagePaper = ({ position = [0, 0.05, 2], onSend }) => {
                         setWantsSharedTaxi((prev) => !prev);
                     }}
                 >
-                    {`[${wantsSharedTaxi ? 'x' : ' '}] Interested in shared taxi`}
+                    {`[${wantsSharedTaxi ? 'x' : ' '}] Shared taxi request`}
                 </Text>
 
                 <Text
-                    position={[-0.5, 0.02, 0.54]}
+                    position={[-0.5, 0.02, 0.43]}
                     rotation={[-Math.PI / 2, 0, 0]}
-                    fontSize={0.035}
+                    fontSize={0.031}
                     color="#333333"
                     font={FONT_PATH}
                     anchorX="left"
@@ -831,7 +831,7 @@ const MessagePaper = ({ position = [0, 0.05, 2], onSend }) => {
                         setOfferingTransport((prev) => !prev);
                     }}
                 >
-                    {`[${offeringTransport ? 'x' : ' '}] I can offer transport`}
+                    {`[${offeringTransport ? 'x' : ' '}] I can offer guest transport`}
                 </Text>
 
                 {/* === SEND BUTTON === */}

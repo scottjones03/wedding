@@ -52,6 +52,27 @@
             background: $color-neon-green;
         }
     }
+
+    &__sound-unlock {
+        position: absolute;
+        left: 50%;
+        bottom: 1rem;
+        transform: translateX(-50%);
+        border: 2px solid $color-black;
+        background: rgba(255, 255, 255, 0.95);
+        color: $color-black;
+        font-family: $font-primary;
+        font-size: 0.95rem;
+        padding: 0.55rem 0.9rem;
+        border-radius: 0.4rem;
+        cursor: pointer;
+        z-index: 2;
+        transition: $transition-fast;
+
+        &:hover {
+            background: $color-neon-green;
+        }
+    }
 }
 
 @keyframes video-lightbox-pop {

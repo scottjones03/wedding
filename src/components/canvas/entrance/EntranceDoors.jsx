@@ -144,7 +144,7 @@ const EntranceDoors = ({
 
         // Camera flies through - STOP CLOSER to hero photo
         tl.to(camera.position, {
-            z: 11,  // Closer stop point (was 11)
+            z: 14,
             y: 0.2, // Match hook's base Y position
             duration: 1.8,
             ease: 'power2.inOut'

@@ -18,26 +18,32 @@ export const WEDDING_INFO_PAGES = {
     basics: {
         slug: 'basics',
         title: 'Wedding Basics',
-        room: 'gallery',
+        room: 'about',
         description: 'The key details at a glance.',
         sections: [
             {
                 heading: 'Couple',
-                lines: ['Scott and Georgina'],
+                lines: ['Scott Jones and Georgina Yates'],
             },
             {
-                heading: 'Ceremony',
+                heading: 'Venue and Core Timings',
                 lines: [
                     'Saturday, 11 May 2027',
-                    'Ceremony starts at 2:00 PM (please arrive by 1:30 PM).',
                     'Holmewood Hall, Church Street, Holme, Peterborough PE7 3PB, United Kingdom.',
+                    'Venue exclusive access window: 12:00 PM (Midday) to 12:00 AM (Midnight).',
+                    'Guest bedroom check-in starts at 12:00 PM.',
+                    'Champagne Bar opens at 11:30 AM and closes 30 minutes before the ceremony.',
+                    'Ceremony starts exactly at 2:00 PM.',
+                    'Room check-out is 10:00 AM the next morning, with final departure by 10:30 AM.',
                 ],
             },
             {
-                heading: 'Reception',
+                heading: 'What Is Included',
                 lines: [
-                    'Reception starts at 4:00 PM.',
-                    'Holmewood Hall, Church Street, Holme, Peterborough PE7 3PB, United Kingdom.',
+                    'A full 3-course wedding breakfast is included for attending guests.',
+                    'Canapes are included during drinks reception.',
+                    'Some drinks are included at key points of the day (welcome drink, meal wine allocation, and toast drink).',
+                    'Evening reception includes buffet, bar access, and DJ/disco.',
                 ],
             },
         ],
@@ -45,13 +51,13 @@ export const WEDDING_INFO_PAGES = {
     travel: {
         slug: 'travel',
         title: 'Travel',
-        room: 'gallery',
+        room: 'about',
         description: 'Airports, rail, and local transport suggestions.',
         sections: [
             {
                 heading: 'Airports',
                 lines: [
-                    'London Stansted (STN): around 70 minutes by car.',
+                    'London Stansted (STN): around 70 minutes by car to Holmewood Hall.',
                     'London Luton (LTN): around 90 minutes by car.',
                     'Birmingham (BHX): around 100 minutes by car.',
                 ],
@@ -60,15 +66,25 @@ export const WEDDING_INFO_PAGES = {
                 heading: 'Rail and Public Transport',
                 lines: [
                     'Nearest major station: Peterborough.',
-                    'From Peterborough station, take a pre-booked taxi or ride-share to the venue.',
+                    'From Peterborough station, use a pre-booked taxi or ride-share to the venue.',
                     'Please note late-night public transport is limited in rural areas.',
                 ],
             },
             {
                 heading: 'Taxi Services',
                 lines: [
-                    'Peterborough Cars and Goldstar-style local firms are usually available.',
-                    'We recommend pre-booking return journeys for late evening collections.',
+                    'Please pre-book taxis well in advance for midnight departures; local availability is limited late at night.',
+                    'Peterborough Cars: 01733 704444',
+                    'Peterborough Taxis 247: 01733 785102',
+                    'Royal Taxis Peterborough: 01733 777000',
+                    'Nationwide Coaches: 01733 334343',
+                ],
+            },
+            {
+                heading: 'Parking and Vehicles',
+                lines: [
+                    'Free on-site parking is available (vehicles parked at owner risk).',
+                    'There are no EV charging stations on-site.',
                 ],
             },
         ],
@@ -76,21 +92,37 @@ export const WEDDING_INFO_PAGES = {
     accommodation: {
         slug: 'accommodation',
         title: 'Accommodation',
-        room: 'gallery',
+        room: 'about',
         description: 'Hotel options and room request guidance.',
         sections: [
             {
-                heading: 'Hotel Blocks',
+                heading: 'On-Site Rooms at Holmewood Hall',
                 lines: [
-                    'Main hotel block details will be shared here once finalised.',
-                    'Please check back for hotel name, full address, booking links, and group code.',
+                    'On-site accommodation is prioritized for close family first.',
+                    'Any remaining rooms will be offered by request once family allocation is complete.',
+                    'Standard room capacity is up to 2 guests per bedroom.',
+                    'No extra beds or airbeds are permitted due to fire safety.',
+                    'All rooms include en-suite bathroom, towels, shower wash, hairdryer, water, and tea/coffee facilities.',
+                    'Irons and ironing boards are available on request.',
                 ],
             },
             {
-                heading: 'Nearby Stays',
+                heading: 'Breakfast and Wi-Fi',
                 lines: [
-                    'There are multiple hotels and lodges within Peterborough and surrounding villages.',
-                    'Use your RSVP form to request a room suggestion and we will follow up directly.',
+                    'Breakfast (Full English plus continental) is served 8:30 AM to 9:30 AM in the Dining Room.',
+                    'Guests staying off-site are welcome to return and join breakfast.',
+                    'Free Wi-Fi is available across the venue, though bedroom signal may vary.',
+                    'There is no room service (pre-ordered bar snacks/drinks may be taken to rooms).',
+                ],
+            },
+            {
+                heading: 'Nearby Hotels',
+                lines: [
+                    'Premier Inn Hampton (4.4 miles): 0333 321 1388',
+                    'The Bell Inn Hotel, Stilton (4.9 miles): 01733 241066',
+                    'The Milestone Peterborough Hotel (5.2 miles): 01733 612695',
+                    'Park Inn by Radisson (10 miles): 01733 353750',
+                    'Holiday Inn (16 miles): 01733 289988',
                 ],
             },
         ],
@@ -98,51 +130,88 @@ export const WEDDING_INFO_PAGES = {
     schedule: {
         slug: 'schedule',
         title: 'Weekend Schedule',
-        room: 'gallery',
+        room: 'about',
         description: 'Broad-strokes timeline for the wedding weekend.',
         sections: [
             {
-                heading: 'Friday',
-                lines: ['7:00 PM: Welcome drinks (optional).'],
-            },
-            {
-                heading: 'Saturday',
+                heading: 'Arrival and Pre-Ceremony',
                 lines: [
-                    '1:30 PM: Guest arrival window.',
-                    '2:00 PM: Ceremony starts.',
-                    '3:00 PM: Cocktail hour.',
-                    '4:00 PM: Reception starts and day meal is served.',
-                    '7:00 PM: First dance and evening celebration begins.',
-                    '12:00 AM: Carriages.',
+                    '11:30 AM: Champagne Bar opens (soft drinks, tea/coffee, beer, wine, prosecco, sandwiches, and snacks).',
+                    '12:00 PM: Guest room check-in opens.',
+                    '1:30 PM: Guest arrival window for ceremony.',
                 ],
             },
             {
-                heading: 'Sunday',
-                lines: ['11:00 AM: Post-wedding brunch (optional, details to follow).'],
+                heading: 'Saturday - Wedding Day',
+                lines: [
+                    '2:00 PM: Ceremony starts.',
+                    '3:00 PM: Drinks reception and canapes.',
+                    '4:00 PM: Full 3-course wedding breakfast.',
+                    '7:00 PM: Evening reception, music, and dancing.',
+                    '12:00 AM: Bar and music close (carriages).',
+                ],
+            },
+            {
+                heading: 'Next Morning',
+                lines: [
+                    '8:30 AM to 9:30 AM: Breakfast service.',
+                    '10:00 AM: Room check-out.',
+                    '10:30 AM: Final departure from the estate.',
+                ],
             },
         ],
     },
     faq: {
         slug: 'faq',
         title: 'Wedding FAQ',
-        room: 'gallery',
+        room: 'about',
         description: 'Answers to common logistics questions.',
         sections: [
             {
                 heading: 'Dress Code',
-                lines: ['Formal attire (suits, dresses, or equivalent).'],
+                lines: ['Formal attire: suits, dresses, or equivalent celebration wear.'],
             },
             {
                 heading: 'Children',
-                lines: ['Children are by invitation only due to venue capacity.'],
+                lines: [
+                    'Please ask us first before bringing children.',
+                    'Children are by invitation/approval only due to venue and room capacity limits.',
+                    'For on-site rooms, up to two children (16 and under) can stay in select rooms with parent-provided travel cots/beds.',
+                ],
             },
             {
                 heading: 'Plus-Ones',
-                lines: ['Plus-ones are by special request and subject to capacity confirmation.'],
+                lines: ['Plus-ones are by special request and subject to final capacity confirmation.'],
             },
             {
                 heading: 'Parking',
                 lines: ['On-site parking is available at Holmewood Hall with attendants guiding arrival flow.'],
+            },
+            {
+                heading: 'Food, Drink, and Payments',
+                lines: [
+                    'Holmewood Hall is cashless (card/contactless payments only).',
+                    'No outside alcohol, food, or corkage is permitted anywhere on-site, including bedrooms and grounds.',
+                    'No food or drinks are permitted on the dance floor.',
+                    'Baby food/milk can be warmed by staff for infants under 2 years old.',
+                ],
+            },
+            {
+                heading: 'Pets',
+                lines: [
+                    'Please ask us first before bringing pets.',
+                    'Well-behaved dogs on leads may be allowed in ground-floor non-carpeted areas (excluding dining rooms) only until welcome drinks end.',
+                    'Pets must be taken off-site before the wedding breakfast starts unless we confirm otherwise.',
+                ],
+            },
+            {
+                heading: 'Accessibility and Comfort',
+                lines: [
+                    'Ground-floor rooms are accessible and a ramp is available at the main entrance.',
+                    'Accessible bedrooms (Old Dairy 1 and 2) and an accessible toilet are available.',
+                    'The venue is a historic listed building and does not have air conditioning; fans/windows will be used in warm weather.',
+                    'Smoking and vaping are prohibited inside all buildings.',
+                ],
             },
             {
                 heading: 'Photos and Social Media',

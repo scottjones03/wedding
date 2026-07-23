@@ -82,15 +82,13 @@ const ScreenReaderOverlay = () => {
                         {currentRoom === 'gallery' && (
                             <div aria-label="Gallery room content">
                                 <h3>Engagement Photos</h3>
-                                <p>Browse our favorite engagement photos and moments together, displayed on paper cards. Click on a card to see more.</p>
+                                <p>Browse our favorite engagement photos and moments together, displayed on paper cards. Swipe or scroll to move through the photo stream.</p>
                                 
                                 {projects && projects.length > 0 && (
                                     <ul>
                                         {projects.map((p, i) => (
                                             <li key={i}>
-                                                <h4>{p.title}</h4>
-                                                <p>{p.description}</p>
-                                                {p.url && <a href={p.url}>Visit {p.title}</a>}
+                                                <p>{p.title || `Photo ${i + 1}`}</p>
                                             </li>
                                         ))}
                                     </ul>

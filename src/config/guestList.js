@@ -13,7 +13,18 @@
 // anything sensitive here (just names).
 export const DAY_GUEST_LIST = [
     // TODO: replace these placeholders with your real day guest list
-    'Guest Name',
+    'Georgina Yates',
+    'Scott Jones',
+    'Stuart Yates',
+    'Louise Yates',
+    'Dominic Yates',
+    'Jolie',
+    'Theresa Jones',
+    'Owen Jones',
+    'Wayne Jones',
+    'Ellie Jones',
+    'Monica Joseph',
+    'Trevor Joseph',
 ];
 
 export const NIGHT_GUEST_LIST = [

@@ -32,21 +32,9 @@ export const SceneProvider = ({ children }) => {
     const [isFastTeleport, setIsFastTeleport] = useState(false); // Fast teleport in progress (skip animations)
 
     // Guest list name-gate - must type a name on the guest list before the entrance door will open
-    const [guestVerified, setGuestVerified] = useState(() => {
-        try {
-            return localStorage.getItem('portfolio_guest_verified') === 'true';
-        } catch {
-            return false;
-        }
-    });
+    const [guestVerified, setGuestVerified] = useState(false);
     const [showGuestGate, setShowGuestGate] = useState(false);
-    const [guestType, setGuestType] = useState(() => {
-        try {
-            return localStorage.getItem('portfolio_guest_type') || null;
-        } catch {
-            return null;
-        }
-    });
+    const [guestType, setGuestType] = useState(null);
 
     // Proposal video lightbox - opened by clicking the couple's portrait
     const [videoLightboxOpen, setVideoLightboxOpen] = useState(false);
@@ -58,6 +46,9 @@ export const SceneProvider = ({ children }) => {
         setCurrentRoom(roomId);
         setExitRequested(false); // Clear any pending exit request
         setOverlayContent(null); // Clear overlay on room change
+        if (roomId === 'about' && !isTeleporting) {
+            setInfoPageSlug(null);
+        }
 
         // Teleportation cleanup - if we just teleported in
         // Note: isFastTeleport is cleared by signalRoomReady, not here
@@ -65,7 +56,7 @@ export const SceneProvider = ({ children }) => {
         setIsTeleporting(false);
         setPendingDoorClick(null);
         // teleportPhase is cleared by finishPaperOpen after animation
-    }, []);
+    }, [isTeleporting]);
 
     const exitRoom = useCallback(() => {
         setCurrentRoom(null);
@@ -101,13 +92,6 @@ export const SceneProvider = ({ children }) => {
 
         setGuestVerified(true);
         setGuestType(type);
-        try {
-            localStorage.setItem('portfolio_guest_verified', 'true');
-            localStorage.setItem('portfolio_guest_name', name);
-            localStorage.setItem('portfolio_guest_type', type);
-        } catch {
-            // localStorage unavailable (private browsing etc.) - just keep it in memory for this session
-        }
         setShowGuestGate(false);
     }, []);
 

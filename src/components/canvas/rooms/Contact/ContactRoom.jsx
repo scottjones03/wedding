@@ -99,8 +99,8 @@ const PHASE = {
 const ContactRoom = ({ showRoom, onReady, isExiting, isWarmup }) => {
     const { camera } = useThree();
     const { isTeleporting } = useScene();
-    const { globalVolume, isMuted } = useAudio();
-    const effectiveVolume = isMuted ? 0 : AUDIO_SETTINGS.volume * globalVolume;
+    const { globalVolume, isMuted, isAmbientSuspended } = useAudio();
+    const effectiveVolume = isMuted || isAmbientSuspended ? 0 : AUDIO_SETTINGS.volume * globalVolume;
 
     const audioRef = useRef();
     useEffect(() => {

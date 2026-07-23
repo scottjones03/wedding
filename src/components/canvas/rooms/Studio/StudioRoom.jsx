@@ -8,7 +8,6 @@ import { TextureLoader } from 'three';
 import FloatingCodeParticles from './FloatingCodeParticles';
 import { PositionalAudio } from '@react-three/drei';
 import { useAudio } from '../../../../context/AudioManager';
-import { useStudioContent } from '../../../../hooks/useSanityData';
 import '../../shaders/RevealMaterial';
 import { isTouchDevice } from '../../../../utils/deviceDetect';
 import { usePaintMaterial } from '../Gallery/usePaintMaterial';
@@ -101,12 +100,10 @@ const StudioRoom = ({ showRoom, onReady, isExiting, isWarmup }) => {
     // Global Scene Context for Overlay
     const { openOverlay, overlayContent, isTeleporting } = useScene();
 
-    const { globalVolume, isMuted } = useAudio();
-    const effectiveVolume = isMuted ? 0 : AUDIO_SETTINGS.volume * globalVolume;
+    const { globalVolume, isMuted, isAmbientSuspended } = useAudio();
+    const effectiveVolume = isMuted || isAmbientSuspended ? 0 : AUDIO_SETTINGS.volume * globalVolume;
 
-    // Pobieranie danych z Sanity.io (fallback do starych danych)
-    const sanityContent = useStudioContent();
-    const activeContent = sanityContent || CONTENT_DATA;
+    const activeContent = CONTENT_DATA;
 
     const audioRef = useRef();
     useEffect(() => {

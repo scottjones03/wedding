@@ -11,7 +11,7 @@ import PaperMaterial from './PaperMaterial';
 import GalleryClouds from './GalleryClouds';
 import { useAudio } from '../../../../context/AudioManager';
 import { usePaintMaterial } from './usePaintMaterial';
-import { useGalleryProjects } from '../../../../hooks/useSanityData';
+import { COUPLES_PHOTO_PATHS } from '../../../../config/couplesPhotoPaths';
 
 // Reusable Vector3 to avoid allocations in useFrame
 const _tempScale = new THREE.Vector3();
@@ -32,43 +32,17 @@ export const GALLERY_INTERACTION_AUDIO_SETTINGS = {
     rolloff: 2        // How fast the sound fades away (exponential)
 };
 
-// Define the unique gallery moments and their textures.
-// These are placeholders — replace the title/description/url with your own,
-// and drop your own images at the same "front"/"painted" paths in public/.
-const FALLBACK_PROJECTS = [
-    {
-        id: 'how-we-met',
-        title: 'HOW WE MET',
-        front: '/textures/gallery/monetuneprzod.webp',
-        painted: '/textures/gallery/monetuneprzod_painted.webp',
-        url: 'page:our-story',
-        detailsHeading: 'HOW WE MET:',
-        description: "Scott and Georgina first met in Chemistry class in 2020, started dating on 16th December 2020, moved in together in August 2025, and got engaged on the 15th of May 2026 \u2014 Gina's birthday.",
-        techStack: []
-    },
-    {
-        id: 'the-proposal',
-        title: 'TRAVEL DETAILS',
-        front: '/textures/gallery/timberkittyprzod.webp',
-        painted: '/textures/gallery/timberkittyprzod_painted.webp',
-        url: 'page:travel',
-        detailsHeading: 'TRAVEL:',
-        description: 'Airports, rail routes, and local taxi guidance for getting to and from Holmewood Hall.',
-        techStack: []
-    },
-    {
-        id: 'save-the-date',
-        title: 'STAY + FAQ',
-        front: '/textures/gallery/bioprzod.webp',
-        painted: '/textures/gallery/bioprzod_painted.webp',
-        url: 'page:accommodation',
-        detailsHeading: 'ACCOMMODATION:',
-        description: 'Hotel blocks, nearby lodge requests, parking notes, and quick logistics guidance.',
-        techStack: []
-    },
-];
+const FALLBACK_PROJECTS = COUPLES_PHOTO_PATHS.map((path, index) => ({
+    id: `couples-photo-${index + 1}`,
+    title: '',
+    front: path,
+    painted: path,
+    url: null,
+    description: '',
+    photoOnly: true,
+}));
 
-const PROJECT_COUNT = 10; // Keep the count for the infinite scroll feel
+const PROJECT_COUNT = COUPLES_PHOTO_PATHS.length;
 const GAP = 2.5;
 
 // Adjust this value (0.0 to 1.0) to crop the right side of the "Houses" graphic.
@@ -77,9 +51,9 @@ const GAP = 2.5;
 const RIGHT_CROP_AMOUNT = 0.2;
 
 const GalleryRoom = ({ showRoom, onReady, isExiting, isWarmup }) => {
-    const { openOverlay, isTeleporting, openInfoPage } = useScene();
-    const { globalVolume, isMuted } = useAudio();
-    const effectiveVolume = isMuted ? 0 : AUDIO_SETTINGS.volume * globalVolume;
+    const { isTeleporting } = useScene();
+    const { globalVolume, isMuted, isAmbientSuspended } = useAudio();
+    const effectiveVolume = isMuted || isAmbientSuspended ? 0 : AUDIO_SETTINGS.volume * globalVolume;
 
     const audioRef = useRef();
     useEffect(() => {
@@ -184,9 +158,7 @@ const GalleryRoom = ({ showRoom, onReady, isExiting, isWarmup }) => {
     // We use matchMedia('(hover: hover)') to detect devices with a cursor/hover capability
     const [canHover, setCanHover] = useState(() => typeof window !== 'undefined' ? window.matchMedia('(hover: hover)').matches : true);
 
-    // Pobieranie danych z Sanity.io (fallback do starych danych)
-    const sanityProjects = useGalleryProjects();
-    const activeProjects = sanityProjects || FALLBACK_PROJECTS;
+    const activeProjects = FALLBACK_PROJECTS;
 
     useEffect(() => {
         const mq = window.matchMedia('(hover: hover)');
@@ -466,7 +438,6 @@ const GalleryRoom = ({ showRoom, onReady, isExiting, isWarmup }) => {
                             isSelected={selectedCard === i}
                             scrollToIndex={scrollToIndex}
                             onClick={handleCardClick}
-                            onOpenPage={openInfoPage}
                             isMobile={!canHover} // Use hover capability for mobile behavior logic
                             isTransitioning={isTransitioning} // Pass down to lock out individual pointer events just in case
                             paintProgress={uniformsData.uPaintProgress}
@@ -520,7 +491,7 @@ const GalleryRoom = ({ showRoom, onReady, isExiting, isWarmup }) => {
 };
 
 // Sub-component for individual project cards
-const ProjectCard = memo(forwardRef(({ index, project, currentScroll, materials, curve, isSelected, scrollToIndex, onClick, onOpenPage, isMobile, isTransitioning, paintProgress, roomOrigin }, ref) => {
+const ProjectCard = memo(forwardRef(({ index, project, currentScroll, materials, curve, isSelected, scrollToIndex, onClick, isMobile, isTransitioning, paintProgress, roomOrigin }, ref) => {
     const cardRef = useRef();
     const paperRef = useRef(); // Ref for the moving part (Paper)
     const materialRef = useRef();
@@ -535,9 +506,22 @@ const ProjectCard = memo(forwardRef(({ index, project, currentScroll, materials,
     const [isAnimating, setIsAnimating] = useState(false);  // True ONLY during flip animation
     const [isScrolling, setIsScrolling] = useState(false);  // True during scroll phase
 
+    const cardSize = useMemo(() => {
+        const img = project.frontTexture?.image;
+        if (!img?.width || !img?.height) {
+            return { width: 1.5, height: 2.0 };
+        }
+
+        const aspect = img.width / img.height;
+        const targetHeight = 2.0;
+        const targetWidth = targetHeight * aspect;
+        return { width: targetWidth, height: targetHeight };
+    }, [project.frontTexture]);
+
     // Whether this project links out to an external page (e.g. photographer site).
     // Projects without a url just close the card instead of "opening" anything.
-    const hasUrl = Boolean(project.url);
+    const isPhotoOnly = Boolean(project.photoOnly);
+    const hasUrl = Boolean(project.url) && !isPhotoOnly;
 
     // Random sway properties
     const swaySpeed = useRef(Math.random() * 0.2 + 0.3); // Slower sway speed
@@ -762,6 +746,7 @@ const ProjectCard = memo(forwardRef(({ index, project, currentScroll, materials,
 
     const handleClick = (e) => {
         e.stopPropagation();
+        if (isPhotoOnly || isTransitioning) return;
         if (onClick) onClick(index);
     };
 
@@ -898,7 +883,7 @@ const ProjectCard = memo(forwardRef(({ index, project, currentScroll, materials,
             ref={cardRef}
             onClick={handleClick}
             onPointerEnter={(e) => {
-                if (isMobile || isTransitioning) return;
+                if (isMobile || isTransitioning || isPhotoOnly) return;
                 e.stopPropagation();
                 setHovered(true);
 
@@ -913,7 +898,7 @@ const ProjectCard = memo(forwardRef(({ index, project, currentScroll, materials,
                 }
             }}
             onPointerLeave={(e) => {
-                if (isMobile || isTransitioning) return;
+                if (isMobile || isTransitioning || isPhotoOnly) return;
                 e.stopPropagation();
                 setHovered(false);
 
@@ -934,7 +919,7 @@ const ProjectCard = memo(forwardRef(({ index, project, currentScroll, materials,
                 position={[0, -1.1, 0]}
             >
                 <mesh>
-                    <planeGeometry args={[1.5, 2, 16, 16]} />
+                    <planeGeometry args={[cardSize.width, cardSize.height, 16, 16]} />
                     <PaperMaterial
                         ref={materialRef}
                         color="#ffffff"
@@ -949,6 +934,7 @@ const ProjectCard = memo(forwardRef(({ index, project, currentScroll, materials,
                 </mesh>
 
                 {/* === PRZYCISK: OPEN NA PLECACH KARTKI === */}
+                {!isPhotoOnly && (
                 <group
                     ref={buttonGroupRef}
                     position={[0, 0.75, 0]}
@@ -985,12 +971,7 @@ const ProjectCard = memo(forwardRef(({ index, project, currentScroll, materials,
                             if (!isSelected || isTransitioning) return;
                             e.stopPropagation();
                             if (hasUrl) {
-                                if (project.url.startsWith('page:')) {
-                                    const pageSlug = project.url.replace('page:', '').trim();
-                                    onOpenPage?.(pageSlug);
-                                } else {
-                                    window.open(project.url, '_blank');
-                                }
+                                window.open(project.url, '_blank');
                             } else if (onClick) {
                                 onClick(index);
                             }
@@ -1012,6 +993,7 @@ const ProjectCard = memo(forwardRef(({ index, project, currentScroll, materials,
                         <meshBasicMaterial color="#e0e0e0" transparent={true} opacity={0} />
                     </mesh>
                 </group>
+                )}
 
                 {/* === TEKST NA PLECACH KARTKI (PROJECT DETAILS) === */}
                 {/* Only shown for info-only cards; link-out cards (hasUrl) just show the button */}
@@ -1065,18 +1047,20 @@ const ProjectCard = memo(forwardRef(({ index, project, currentScroll, materials,
                   color: kolor napisu
                   font: opcjonalnie dajesz tu inną czcionkę z folderu /public/fonts/
                 */}
-                <Text
-                    ref={textRef}
-                    position={[0, 0.7, 0]} // Tylko dwa pierwsze parametry [X, Y] mają tutaj znaczenie
-                    fontSize={0.20}
-                    color="#1c1c1c"
-                    font="/fonts/CabinSketch-Bold.ttf"
-                    anchorX="center"
-                    anchorY="middle"
-                    fillOpacity={0} // Start hidden
-                >
-                    {project.title}
-                </Text>
+                {!isPhotoOnly && (
+                    <Text
+                        ref={textRef}
+                        position={[0, 0.7, 0]} // Tylko dwa pierwsze parametry [X, Y] mają tutaj znaczenie
+                        fontSize={0.20}
+                        color="#1c1c1c"
+                        font="/fonts/CabinSketch-Bold.ttf"
+                        anchorX="center"
+                        anchorY="middle"
+                        fillOpacity={0} // Start hidden
+                    >
+                        {project.title}
+                    </Text>
+                )}
 
                 <PositionalAudio
                     ref={paperAudioRef}
