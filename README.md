@@ -89,25 +89,20 @@ To run this application natively on your local machine:
 
 ---
 
-## Cloudflare Pages Deployment
+## Cloudflare Workers Deployment
 
-This repo is ready for a standard Cloudflare Pages Git deployment.
+This repo is actually deployed as a **Cloudflare Worker with static assets** (Git-connected Workers Build), not Cloudflare Pages — the dashboard for this is under **Workers & Pages → wedding → Settings**.
 
-Use these build settings in the Cloudflare dashboard:
+Build settings (**Settings → Build**):
 
-- Framework preset: `Vite`
 - Build command: `npm run build`
-- Build output directory: `dist`
+- Deploy command: `npx wrangler deploy`
 - Root directory: `/`
 
-Add these environment variables for both Production and Preview:
+> [!IMPORTANT]
+> `VITE_*` variables (`VITE_WEB3FORMS_KEY`, `VITE_SITE_URL`, etc.) are read by **Vite at build time**, not by the Worker at runtime. Do NOT set them under **Settings → Variables and Secrets** — that page is for runtime `env` bindings and is disabled/irrelevant for a static-assets-only Worker. Instead set them as **build variables** under **Settings → Build** (edit the Build configuration to reveal the environment variables fields). If that section isn't available in your dashboard, `VITE_WEB3FORMS_KEY` also has a hardcoded fallback in [MessagePaper.jsx](src/components/canvas/rooms/Contact/MessagePaper.jsx) so the RSVP form still works without it.
 
-- `VITE_WEB3FORMS_KEY`
-- `VITE_SITE_URL`
-- `VITE_POSTHOG_KEY` and `VITE_POSTHOG_HOST` if analytics are enabled
-- `NODE_VERSION=22`
-
-The `portfolio-itom` folder is a separate Sanity Studio project and should not be used as the Pages root.
+The `portfolio-itom` folder is a separate Sanity Studio project and should not be used as the Worker root.
 
 ## 🤝 Contributing & Feedback
 

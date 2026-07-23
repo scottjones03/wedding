@@ -147,9 +147,13 @@ const SmoothButton = ({ texture, onClick, position, size, text, fontPath }) => {
     );
 };
 
-// Web3Forms API Key — loaded from environment variable so it's not exposed in the repo.
-// Set VITE_WEB3FORMS_KEY in .env (local dev) and in Cloudflare Pages dashboard (production).
-const WEB3FORMS_KEY = import.meta.env.VITE_WEB3FORMS_KEY || '';
+// Web3Forms API Key — prefers the VITE_WEB3FORMS_KEY build-time env var (set it in
+// .env locally, or in Cloudflare's Worker "Build variables and secrets" for production),
+// but falls back to the real key baked in here so the form still works even if that
+// build variable never gets configured. Web3Forms access keys are meant to be used
+// directly in client-side requests (unlike a traditional API secret) — abuse is
+// mitigated by the rate-limiting/spam checks below, not by hiding this value.
+const WEB3FORMS_KEY = import.meta.env.VITE_WEB3FORMS_KEY || 'd58e5c6c-cee9-406c-9522-41bf8c472e6c';
 
 // Only these domains are allowed to submit the form.
 // localhost/127.0.0.1 are always allowed so the form works in local dev.
