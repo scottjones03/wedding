@@ -15,8 +15,17 @@ export const initAudio = () => {
     isMuted = savedMuted === 'true';
 
     if (!bgMusicAudio) {
-        // We use the file provided by the user in public/sounds/
-        bgMusicAudio = new Audio('/sounds/cfl_turningpages-belem-breeze-487596.ogg');
+        bgMusicAudio = new Audio();
+
+        // Safari/iOS cannot play Ogg Vorbis at all, so it would silently fail to
+        // play the background track on deployed builds (works fine in Chrome dev).
+        // Prefer MP3 (universally supported) and only fall back to Ogg if a browser
+        // somehow can't play MP3.
+        const canPlayMp3 = bgMusicAudio.canPlayType('audio/mpeg');
+        bgMusicAudio.src = canPlayMp3
+            ? '/sounds/cfl_turningpages-belem-breeze-487596.mp3'
+            : '/sounds/cfl_turningpages-belem-breeze-487596.ogg';
+
         bgMusicAudio.preload = 'auto'; // Force browser to fetch data immediately
         bgMusicAudio.loop = true;
         bgMusicAudio.volume = 0.3; // Default volume for background cozy music

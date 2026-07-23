@@ -55,14 +55,6 @@ export const WEDDING_INFO_PAGES = {
         description: 'Airports, rail, and local transport suggestions.',
         sections: [
             {
-                heading: 'Airports',
-                lines: [
-                    'London Stansted (STN): around 70 minutes by car to Holmewood Hall.',
-                    'London Luton (LTN): around 90 minutes by car.',
-                    'Birmingham (BHX): around 100 minutes by car.',
-                ],
-            },
-            {
                 heading: 'Rail and Public Transport',
                 lines: [
                     'Nearest major station: Peterborough.',
@@ -96,23 +88,13 @@ export const WEDDING_INFO_PAGES = {
         description: 'Hotel options and room request guidance.',
         sections: [
             {
-                heading: 'On-Site Rooms at Holmewood Hall',
+                heading: 'At Holmewood Hall',
                 lines: [
-                    'On-site accommodation is prioritized for close family first.',
-                    'Any remaining rooms will be offered by request once family allocation is complete.',
+                    'On-site accommodation is prioritized for close family first, any remaining rooms will be offered by request once family allocation is complete.',
                     'Standard room capacity is up to 2 guests per bedroom.',
                     'No extra beds or airbeds are permitted due to fire safety.',
                     'All rooms include en-suite bathroom, towels, shower wash, hairdryer, water, and tea/coffee facilities.',
                     'Irons and ironing boards are available on request.',
-                ],
-            },
-            {
-                heading: 'Breakfast and Wi-Fi',
-                lines: [
-                    'Breakfast (Full English plus continental) is served 8:30 AM to 9:30 AM in the Dining Room.',
-                    'Guests staying off-site are welcome to return and join breakfast.',
-                    'Free Wi-Fi is available across the venue, though bedroom signal may vary.',
-                    'There is no room service (pre-ordered bar snacks/drinks may be taken to rooms).',
                 ],
             },
             {
@@ -172,27 +154,15 @@ export const WEDDING_INFO_PAGES = {
                 lines: ['Formal attire: suits, dresses, or equivalent celebration wear.'],
             },
             {
-                heading: 'Children',
+                heading: 'Children and Pets',
                 lines: [
-                    'Please ask us first before bringing children.',
-                    'Children are by invitation/approval only due to venue and room capacity limits.',
+                    'Please ask us first before bringing children or pets.',
                     'For on-site rooms, up to two children (16 and under) can stay in select rooms with parent-provided travel cots/beds.',
                 ],
             },
             {
                 heading: 'Plus-Ones',
-                lines: ['Plus-ones are by special request and subject to final capacity confirmation.'],
-            },
-            {
-                heading: 'Parking',
-                lines: ['On-site parking is available at Holmewood Hall with attendants guiding arrival flow.'],
-            },
-            {
-                heading: 'Photos and Social Media',
-                lines: [
-                    'Please keep the ceremony unplugged and phones away during the vows.',
-                    'You are welcome to share photos from the reception afterwards.',
-                ],
+                lines: ['Possible by special request due to strict venue capacity limits, subject to final confirmation.'],
             },
         ],
     },
@@ -203,31 +173,17 @@ export const WEDDING_INFO_PAGES = {
         description: 'Food, drink, pets, and accessibility details for Holmewood Hall.',
         sections: [
             {
-                heading: 'Food, Drink, and Payments',
+                heading: '',
                 lines: [
                     'Holmewood Hall is cashless (card/contactless payments only).',
                     'No outside alcohol, food, or corkage is permitted anywhere on-site, including bedrooms and grounds.',
                     'No food or drinks are permitted on the dance floor.',
-                    'Baby food/milk can be warmed by staff for infants under 2 years old.',
-                ],
-            },
-            {
-                heading: 'Pets',
-                lines: [
-                    'Please ask us first before bringing pets.',
-                    'Well-behaved dogs on leads may be allowed in ground-floor non-carpeted areas (excluding dining rooms) only until welcome drinks end.',
-                    'Pets must be taken off-site before the wedding breakfast starts unless we confirm otherwise.',
-                ],
-            },
-            {
-                heading: 'Accessibility and Comfort',
-                lines: [
-                    'Ground-floor rooms are accessible and a ramp is available at the main entrance.',
-                    'Accessible bedrooms (Old Dairy 1 and 2) and an accessible toilet are available.',
-                    'The venue is a historic listed building and does not have air conditioning; fans/windows will be used in warm weather.',
                     'Smoking and vaping are prohibited inside all buildings.',
+                    'Baby food/milk can be warmed by staff for infants under 2 years old.',
+                    'Please keep the ceremony unplugged and phones away during the vows.',
+                    'You are welcome to share photos from the reception afterwards.',
                 ],
-            },
+            }
         ],
     },
 };

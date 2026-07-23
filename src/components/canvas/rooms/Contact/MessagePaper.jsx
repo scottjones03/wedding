@@ -727,7 +727,7 @@ const MessagePaper = ({ position = [0, 0.05, 2], onSend }) => {
                     baseRotation={[-Math.PI / 2, 0, 0.02]}
                     hitboxPosition={[0, 0.005, -0.26]}
                     hitboxSize={[PAPER_WIDTH * 0.85, 0.08]}
-                    fontSize={0.04}
+                    fontSize={0.05}
                     maxWidth={PAPER_WIDTH * 0.8}
                     fontPath={FONT_PATH}
                 />
@@ -742,7 +742,7 @@ const MessagePaper = ({ position = [0, 0.05, 2], onSend }) => {
                     baseRotation={[-Math.PI / 2, 0, 0.02]}
                     hitboxPosition={[0, 0.005, -0.15]}
                     hitboxSize={[PAPER_WIDTH * 0.85, 0.08]}
-                    fontSize={0.04}
+                    fontSize={0.05}
                     maxWidth={PAPER_WIDTH * 0.8}
                     fontPath={FONT_PATH}
                 />
@@ -755,12 +755,12 @@ const MessagePaper = ({ position = [0, 0.05, 2], onSend }) => {
                     cursor={cursorVisible ? '|' : ' '}
                     onClick={() => { setActiveField('message'); setTimeout(() => dietaryInputRef.current?.focus(), 10); }}
                     // Layout
-                    position={[-0.46, 0.008, -0.08]}
+                    position={[-0.5, 0.008, -0.08]}
                     baseRotation={[-Math.PI / 2, 0, 0.02]}
                     hitboxPosition={[0, 0.005, 0.06]}
                     hitboxSize={[PAPER_WIDTH * 0.85, 0.26]}
                     // Style
-                    fontSize={0.04}
+                    fontSize={0.05}
                     maxWidth={PAPER_WIDTH * 0.75}
                     fontPath={FONT_PATH}
                     anchorY="top"
@@ -771,7 +771,7 @@ const MessagePaper = ({ position = [0, 0.05, 2], onSend }) => {
                 <Text
                     position={[-0.5, 0.02, 0.14]}
                     rotation={[-Math.PI / 2, 0, 0]}
-                    fontSize={0.031}
+                    fontSize={0.05}
                     color="#333333"
                     font={FONT_PATH}
                     anchorX="left"
@@ -788,7 +788,7 @@ const MessagePaper = ({ position = [0, 0.05, 2], onSend }) => {
                     <Text
                         position={[0.18, 0.02, 0.14]}
                         rotation={[-Math.PI / 2, 0, 0]}
-                        fontSize={0.028}
+                        fontSize={0.05}
                         color="#333333"
                         font={FONT_PATH}
                         anchorX="left"
@@ -805,7 +805,7 @@ const MessagePaper = ({ position = [0, 0.05, 2], onSend }) => {
                 <Text
                     position={[-0.5, 0.02, 0.27]}
                     rotation={[-Math.PI / 2, 0, 0]}
-                    fontSize={0.031}
+                    fontSize={0.05}
                     color="#333333"
                     font={FONT_PATH}
                     anchorX="left"
@@ -821,7 +821,7 @@ const MessagePaper = ({ position = [0, 0.05, 2], onSend }) => {
                 <Text
                     position={[-0.5, 0.02, 0.34]}
                     rotation={[-Math.PI / 2, 0, 0]}
-                    fontSize={0.031}
+                    fontSize={0.05}
                     color="#333333"
                     font={FONT_PATH}
                     anchorX="left"
