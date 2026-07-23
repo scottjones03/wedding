@@ -541,37 +541,9 @@ const ContentCard = ({ content, isOpen, onClose, isMobile, onAction }) => {
                             {/* Description */}
                             <div
                                 style={{
-                                    display: 'grid',
-                                    gridTemplateColumns: isMobile ? '1fr' : 'minmax(120px, 160px) 1fr',
-                                    gap: '0.9rem',
-                                    alignItems: 'start',
                                     ...getStaggerStyle(300)
                                 }}
                             >
-                                {(content.thumbnail || content.frontTexture || content.image) && (
-                                    <div
-                                        style={{
-                                            width: '100%',
-                                            aspectRatio: '1 / 1',
-                                            border: '2px solid #1a1a1a',
-                                            background: '#f6f6f6',
-                                            overflow: 'hidden'
-                                        }}
-                                    >
-                                        <img
-                                            src={content.thumbnail || content.frontTexture || content.image}
-                                            alt={content.title || 'Wedding photo'}
-                                            loading="lazy"
-                                            decoding="async"
-                                            style={{
-                                                width: '100%',
-                                                height: '100%',
-                                                objectFit: 'cover'
-                                            }}
-                                        />
-                                    </div>
-                                )}
-
                                 <p
                                     ref={descriptionRef}
                                     style={{

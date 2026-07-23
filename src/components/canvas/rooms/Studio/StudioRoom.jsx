@@ -48,6 +48,46 @@ const VERTICAL_SPACING = 2.5; // Space between monitor rings
 const TOWER_Y_START = -5; // Starting Y offset for tower (negative = lower) -> CONTROLS HEIGHT (UP/DOWN)
 const TOWER_Z_START = -10; // Starting Z position (negative = further away) -> CONTROLS DISTANCE
 
+// Reorders a repeated-content list so that no two monitors that are physically
+// next to each other around a ring (including the wraparound from last to first)
+// show the same content item. Without this, shuffling each repetition of the
+// small content pool independently often placed duplicate images/monitors
+// beside one another, which looked jarring as the tower spins.
+function reorderToAvoidAdjacentRepeats(list, ringSize) {
+    const arr = [...list];
+    const n = arr.length;
+    if (n === 0 || ringSize <= 1) return arr;
+
+    const getPrevIndex = (i) => {
+        const ringStart = Math.floor(i / ringSize) * ringSize;
+        const ringEnd = Math.min(ringStart + ringSize, n) - 1;
+        const prevIdx = i === ringStart ? ringEnd : i - 1;
+        return prevIdx === i ? -1 : prevIdx;
+    };
+
+    const sameContent = (a, b) => a && b && a.id === b.id;
+
+    for (let i = 0; i < n; i++) {
+        const prevIdx = getPrevIndex(i);
+        if (prevIdx === -1 || !sameContent(arr[i], arr[prevIdx])) continue;
+
+        // Look for a later item to swap with that resolves this conflict
+        // without creating a new one at either position.
+        for (let k = i + 1; k < n; k++) {
+            const kPrev = getPrevIndex(k);
+            const resolvesI = !sameContent(arr[k], arr[prevIdx]);
+            const keepsKOk = kPrev === -1 || kPrev === i || !sameContent(arr[i], arr[kPrev]);
+            if (resolvesI && keepsKOk) {
+                [arr[i], arr[k]] = [arr[k], arr[i]];
+                break;
+            }
+        }
+    }
+
+    return arr;
+}
+
+
 const StudioRoom = ({ showRoom, onReady, isExiting, isWarmup }) => {
     const groupRef = useRef();
     const towerRef = useRef();
@@ -184,6 +224,10 @@ const StudioRoom = ({ showRoom, onReady, isExiting, isWarmup }) => {
                 shuffledContent = [...shuffledContent, ...[...activeContent].sort(() => 0.5 - Math.random())];
             }
         }
+
+        // Avoid the same monitor/content showing up right next to another
+        // instance of itself around a ring (jarring while the tower spins).
+        shuffledContent = reorderToAvoidAdjacentRepeats(shuffledContent, MONITORS_PER_RING);
 
         // Calculate how many rings we need
         const totalMonitors = shuffledContent.length;
