@@ -9,6 +9,10 @@ const PAPER_WIDTH = 1.51; // Legacy ratio 1197/1340
 const PAPER_HEIGHT = 1.7;
 const FONT_PATH = '/fonts/CabinSketch-Regular.ttf';
 
+// Ordered list of RSVP fields so Tab always moves forward/backward through them in
+// the correct visual sequence, regardless of any native DOM tab-order quirks.
+const FIELD_ORDER = ['email', 'subject', 'plusOneNotes', 'stayRequest', 'message'];
+
 // Helper: Interactive Text Field with Smooth Animation and Invisible Hitbox
 const InteractiveTextField = ({
     isActive,
@@ -204,7 +208,6 @@ const MessagePaper = ({ position = [0, 0.05, 2], onSend }) => {
     const groupRef = useRef();
     const paperRef = useRef();
     const backPaperRef = useRef(); // Back side of paper (white)
-    const hiddenInputRef = useRef();
     const emailInputRef = useRef();
     const plusOnesInputRef = useRef();
     const plusOneNotesInputRef = useRef();
@@ -221,12 +224,16 @@ const MessagePaper = ({ position = [0, 0.05, 2], onSend }) => {
     const [attendanceType, setAttendanceType] = useState(guestType === 'day' ? 'day' : 'evening');
     const [wantsSharedTaxi, setWantsSharedTaxi] = useState(false);
     const [offeringTransport, setOfferingTransport] = useState(false);
+    const [notAttending, setNotAttending] = useState(false);
     const [activeField, setActiveField] = useState(null);
-        useEffect(() => {
-            if (guestType === 'day') {
-                setAttendanceType('day');
-            }
-        }, [guestType]);
+    // Only auto-default day guests to 'day' attendance until they've manually
+    // toggled it themselves — full day guests are still allowed to switch to evening-only.
+    const hasManuallySetAttendance = useRef(false);
+    useEffect(() => {
+        if (guestType === 'day' && !hasManuallySetAttendance.current) {
+            setAttendanceType('day');
+        }
+    }, [guestType]);
 
     const [cursorVisible, setCursorVisible] = useState(true);
     const [botcheck, setBotcheck] = useState(''); // Honeypot state
@@ -240,16 +247,14 @@ const MessagePaper = ({ position = [0, 0.05, 2], onSend }) => {
     // Email validation helper
     const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
-    // Form validation — dietary requirements (message) is optional, everything else is required
+    // Form validation — only email is always required. Attendance is only required
+    // when the guest IS attending (ticking "not attending" skips it entirely so that
+    // box can be checked and sent straight away). Plus-ones is optional.
     const validateForm = () => {
         const newErrors = {};
         if (!email.trim()) newErrors.email = 'Email required';
         else if (!isValidEmail(email)) newErrors.email = 'Invalid email format';
-        if (!plusOnes.trim()) newErrors.subject = 'Please enter number of plus-one requests (0 if none)';
-        if (!attendanceType) newErrors.attendance = 'Please select full day or evening attendance';
-        if (guestType === 'day' && attendanceType !== 'day') {
-            newErrors.attendance = 'Day guests can only confirm full day attendance';
-        }
+        if (!notAttending && !attendanceType) newErrors.attendance = 'Please select full day or evening attendance';
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
@@ -385,20 +390,23 @@ const MessagePaper = ({ position = [0, 0.05, 2], onSend }) => {
                     subject: `Wedding RSVP from ${email}`,
                     email: email,
                     guest_type: guestType || 'unknown',
-                    attendance_type: attendanceType,
+                    attendance_type: notAttending ? 'not_attending' : attendanceType,
                     // Explicit Reply-To so replying goes straight to the guest
                     // (Web3Forms also does this automatically for a field named "email").
                     replyto: email,
-                    plus_ones: plusOnes,
+                    plus_ones: plusOnes || 'None',
                     plus_one_request_details: plusOneNotes || 'None',
                     room_or_lodge_request: stayRequest || 'None',
                     shared_taxi_interest: wantsSharedTaxi ? 'Yes' : 'No',
                     offering_transport: offeringTransport ? 'Yes' : 'No',
                     dietary_requirements: dietaryNotes || 'None',
-                    message: [
+                    message: notAttending ? [
+                        `Guest type: ${guestType || 'unknown'}`,
+                        `Attendance: Not attending`,
+                    ].join('\n') : [
                         `Guest type: ${guestType || 'unknown'}`,
                         `Attendance: ${attendanceType}`,
-                        `Plus ones requested: ${plusOnes}`,
+                        `Plus ones requested: ${plusOnes || 'None'}`,
                         `Plus-one details: ${plusOneNotes || 'None'}`,
                         `Room/lodge request: ${stayRequest || 'None'}`,
                         `Interested in shared taxi: ${wantsSharedTaxi ? 'Yes' : 'No'}`,
@@ -416,13 +424,14 @@ const MessagePaper = ({ position = [0, 0.05, 2], onSend }) => {
                 onSend?.({
                     email,
                     guestType,
-                    attendanceType,
+                    attendanceType: notAttending ? 'not_attending' : attendanceType,
                     plusOnes,
                     plusOneNotes,
                     stayRequest,
                     wantsSharedTaxi,
                     offeringTransport,
                     dietaryNotes,
+                    notAttending,
                 });
 
                 // Clear form after success
@@ -433,6 +442,8 @@ const MessagePaper = ({ position = [0, 0.05, 2], onSend }) => {
                 setStayRequest('');
                 setWantsSharedTaxi(false);
                 setOfferingTransport(false);
+                setNotAttending(false);
+                hasManuallySetAttendance.current = false;
                 setAttendanceType(guestType === 'day' ? 'day' : 'evening');
                 formLoadedAt.current = Date.now(); // Reset timing trap
             } else {
@@ -453,6 +464,7 @@ const MessagePaper = ({ position = [0, 0.05, 2], onSend }) => {
         wantsSharedTaxi,
         offeringTransport,
         attendanceType,
+        notAttending,
         guestType,
         onSend,
         validateForm,
@@ -481,8 +493,7 @@ const MessagePaper = ({ position = [0, 0.05, 2], onSend }) => {
     const handleBlur = useCallback(() => {
         setTimeout(() => {
             const active = document.activeElement;
-            if (active !== hiddenInputRef.current &&
-                active !== emailInputRef.current &&
+            if (active !== emailInputRef.current &&
                 active !== plusOnesInputRef.current &&
                 active !== plusOneNotesInputRef.current &&
                 active !== stayRequestInputRef.current &&
@@ -491,6 +502,29 @@ const MessagePaper = ({ position = [0, 0.05, 2], onSend }) => {
             }
         }, 100);
     }, []);
+
+    // Ordered list of fields so Tab always moves forward/backward through them in
+    // the correct visual sequence, regardless of any native DOM tab-order quirks.
+    const FIELD_REFS = useMemo(() => ({
+        email: emailInputRef,
+        subject: plusOnesInputRef,
+        plusOneNotes: plusOneNotesInputRef,
+        stayRequest: stayRequestInputRef,
+        message: dietaryInputRef,
+    }), []);
+
+    const handleFieldKeyDown = useCallback((e, fieldId) => {
+        if (e.key !== 'Tab') return;
+        const idx = FIELD_ORDER.indexOf(fieldId);
+        const nextIdx = e.shiftKey ? idx - 1 : idx + 1;
+        // Out of range on either end - let the browser's native Tab behavior continue
+        // past the form instead of trapping focus.
+        if (nextIdx < 0 || nextIdx >= FIELD_ORDER.length) return;
+        e.preventDefault();
+        const nextField = FIELD_ORDER[nextIdx];
+        setActiveField(nextField);
+        setTimeout(() => FIELD_REFS[nextField].current?.focus(), 10);
+    }, [FIELD_REFS]);
 
     // Format message (word wrap)
     const formattedMessage = useMemo(() => {
@@ -544,13 +578,12 @@ const MessagePaper = ({ position = [0, 0.05, 2], onSend }) => {
         <group ref={groupRef} position={position}>
             {/* Hidden HTML inputs */}
             <Html position={[0, 0, 0]} style={{ position: 'fixed', left: '-9999px', top: '-9999px', opacity: 0, pointerEvents: 'none' }}>
-                <textarea ref={hiddenInputRef} value={dietaryNotes} onChange={handleMessageInput} onBlur={handleBlur} aria-label="Dietary requirements and notes" style={{ pointerEvents: 'auto' }} />
-                <input ref={emailInputRef} type="email" value={email} onChange={handleEmailInput} onBlur={handleBlur} aria-label="Email" style={{ pointerEvents: 'auto' }} />
-                <input ref={plusOnesInputRef} type="text" value={plusOnes} onChange={handlePlusOnesInput} onBlur={handleBlur} aria-label="Number of plus ones" style={{ pointerEvents: 'auto' }} />
-                <input ref={plusOneNotesInputRef} type="text" value={plusOneNotes} onChange={handlePlusOneNotesInput} onBlur={handleBlur} aria-label="Plus one request details" style={{ pointerEvents: 'auto' }} />
-                <input ref={stayRequestInputRef} type="text" value={stayRequest} onChange={handleStayRequestInput} onBlur={handleBlur} aria-label="Room or lodge request" style={{ pointerEvents: 'auto' }} />
-                <textarea ref={dietaryInputRef} value={dietaryNotes} onChange={handleMessageInput} onBlur={handleBlur} aria-label="Dietary requirements" style={{ pointerEvents: 'auto' }} />
-                <input type="checkbox" name="botcheck" checked={botcheck} onChange={handleBotcheckInput} style={{ pointerEvents: 'auto' }} />
+                <input ref={emailInputRef} type="email" value={email} onChange={handleEmailInput} onBlur={handleBlur} onKeyDown={(e) => handleFieldKeyDown(e, 'email')} aria-label="Email" style={{ pointerEvents: 'auto' }} />
+                <input ref={plusOnesInputRef} type="text" value={plusOnes} onChange={handlePlusOnesInput} onBlur={handleBlur} onKeyDown={(e) => handleFieldKeyDown(e, 'subject')} aria-label="Number of plus ones" style={{ pointerEvents: 'auto' }} />
+                <input ref={plusOneNotesInputRef} type="text" value={plusOneNotes} onChange={handlePlusOneNotesInput} onBlur={handleBlur} onKeyDown={(e) => handleFieldKeyDown(e, 'plusOneNotes')} aria-label="Plus one request details" style={{ pointerEvents: 'auto' }} />
+                <input ref={stayRequestInputRef} type="text" value={stayRequest} onChange={handleStayRequestInput} onBlur={handleBlur} onKeyDown={(e) => handleFieldKeyDown(e, 'stayRequest')} aria-label="Room or lodge request" style={{ pointerEvents: 'auto' }} />
+                <textarea ref={dietaryInputRef} value={dietaryNotes} onChange={handleMessageInput} onBlur={handleBlur} onKeyDown={(e) => handleFieldKeyDown(e, 'message')} aria-label="Dietary requirements" style={{ pointerEvents: 'auto' }} />
+                <input type="checkbox" name="botcheck" checked={botcheck} onChange={handleBotcheckInput} tabIndex={-1} style={{ pointerEvents: 'auto' }} />
             </Html>
 
             {/* Main Paper Mesh - FRONT (with texture) */}
@@ -598,7 +631,7 @@ const MessagePaper = ({ position = [0, 0.05, 2], onSend }) => {
                 <InteractiveTextField
                     isActive={activeField === 'subject'}
                     value={plusOnes}
-                    placeholder="plus-ones requested (0 if none)..."
+                    placeholder="plus-ones requested (optional, 0 if none)..."
                     cursor={cursorVisible ? '|' : ' '}
                     onClick={() => { setActiveField('subject'); setTimeout(() => plusOnesInputRef.current?.focus(), 10); }}
                     // Layout
@@ -667,19 +700,21 @@ const MessagePaper = ({ position = [0, 0.05, 2], onSend }) => {
                     position={[-0.5, 0.02, 0.14]}
                     rotation={[-Math.PI / 2, 0, 0]}
                     fontSize={0.05}
-                    color="#333333"
+                    color={notAttending ? '#999999' : '#333333'}
                     font={FONT_PATH}
                     anchorX="left"
                     anchorY="middle"
                     onClick={(e) => {
                         e.stopPropagation();
-                        if (guestType !== 'day') setAttendanceType('evening');
+                        if (notAttending) return;
+                        hasManuallySetAttendance.current = true;
+                        setAttendanceType(attendanceType === 'day' ? 'evening' : 'day');
                     }}
                 >
-                    {guestType === 'day' ? 'Attendance: Full day (day guest)' : `Attendance: ${attendanceType === 'day' ? 'Full day' : 'Evening only'}`}
+                    {`Attendance: ${attendanceType === 'day' ? 'Full day' : 'Evening only'}`}
                 </Text>
 
-                {guestType !== 'day' && (
+                {!notAttending && (
                     <Text
                         position={[0.18, 0.02, 0.14]}
                         rotation={[-Math.PI / 2, 0, 0]}
@@ -690,6 +725,7 @@ const MessagePaper = ({ position = [0, 0.05, 2], onSend }) => {
                         anchorY="middle"
                         onClick={(e) => {
                             e.stopPropagation();
+                            hasManuallySetAttendance.current = true;
                             setAttendanceType(attendanceType === 'day' ? 'evening' : 'day');
                         }}
                     >
@@ -701,12 +737,13 @@ const MessagePaper = ({ position = [0, 0.05, 2], onSend }) => {
                     position={[-0.5, 0.02, 0.27]}
                     rotation={[-Math.PI / 2, 0, 0]}
                     fontSize={0.05}
-                    color="#333333"
+                    color={notAttending ? '#999999' : '#333333'}
                     font={FONT_PATH}
                     anchorX="left"
                     anchorY="middle"
                     onClick={(e) => {
                         e.stopPropagation();
+                        if (notAttending) return;
                         setWantsSharedTaxi((prev) => !prev);
                     }}
                 >
@@ -717,16 +754,35 @@ const MessagePaper = ({ position = [0, 0.05, 2], onSend }) => {
                     position={[-0.5, 0.02, 0.34]}
                     rotation={[-Math.PI / 2, 0, 0]}
                     fontSize={0.05}
+                    color={notAttending ? '#999999' : '#333333'}
+                    font={FONT_PATH}
+                    anchorX="left"
+                    anchorY="middle"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        if (notAttending) return;
+                        setOfferingTransport((prev) => !prev);
+                    }}
+                >
+                    {`[${offeringTransport ? 'x' : ' '}] I can offer guest transport`}
+                </Text>
+
+                {/* Not Attending - any guest can tick this and send straight away,
+                    skipping the attendance requirement entirely */}
+                <Text
+                    position={[-0.5, 0.02, 0.41]}
+                    rotation={[-Math.PI / 2, 0, 0]}
+                    fontSize={0.05}
                     color="#333333"
                     font={FONT_PATH}
                     anchorX="left"
                     anchorY="middle"
                     onClick={(e) => {
                         e.stopPropagation();
-                        setOfferingTransport((prev) => !prev);
+                        setNotAttending((prev) => !prev);
                     }}
                 >
-                    {`[${offeringTransport ? 'x' : ' '}] I can offer guest transport`}
+                    {`[${notAttending ? 'x' : ' '}] Sorry, I can't make it`}
                 </Text>
 
                 {/* === SEND BUTTON === */}
@@ -750,7 +806,7 @@ const MessagePaper = ({ position = [0, 0.05, 2], onSend }) => {
                         anchorX="center"
                         anchorY="middle"
                     >
-                        {errors.email || errors.subject || errors.attendance || errors.message || 'Please fill all fields'}
+                        {errors.email || errors.attendance || errors.message || 'Please fill all fields'}
                     </Text>
                 )}
 
