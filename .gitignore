@@ -4,3 +4,18 @@ dist/
 .env
 .env.*
 !.env.example
+
+# Raw/original source photos and videos - only the optimized .webp files
+# generated from these are actually used by the app (see couplesPhotoPaths.js).
+# Keeping the multi-hundred-MB originals out of git avoids huge/slow pushes.
+public/couples_photo/*.jpg
+public/couples_photo/*.jpeg
+public/couples_photo/*.JPG
+public/couples_photo/*.JPEG
+public/couples_photo/*.heic
+public/couples_photo/*.HEIC
+public/couples_photo/*.mov
+public/couples_photo/*.MOV
+public/couples_photo/*.mp4
+public/couples_photo/*.MP4
+!public/couples_photo/*.webp
