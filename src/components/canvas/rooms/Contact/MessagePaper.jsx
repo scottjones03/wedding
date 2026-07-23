@@ -621,7 +621,7 @@ const MessagePaper = ({ position = [0, 0.05, 2], onSend }) => {
                 <InteractiveTextField
                     isActive={activeField === 'subject'}
                     value={plusOnes}
-                    placeholder="plus ones (e.g. 2)..."
+                    placeholder="requested number of plus ones (e.g. 2)... no guarantee, but we will do our best to accommodate!"
                     cursor={cursorVisible ? '|' : ' '}
                     onClick={() => { setActiveField('subject'); setTimeout(() => plusOnesInputRef.current?.focus(), 10); }}
                     // Layout
@@ -639,7 +639,7 @@ const MessagePaper = ({ position = [0, 0.05, 2], onSend }) => {
                 <InteractiveTextField
                     isActive={activeField === 'message'}
                     value={formattedMessage}
-                    placeholder="dietary requirements (optional)..."
+                    placeholder="names / relationship of plus ones and dietary requirements (optional)... we will do our best to accommodate!"
                     cursor={cursorVisible ? '|' : ' '}
                     onClick={() => { setActiveField('message'); setTimeout(() => hiddenInputRef.current?.focus(), 10); }}
                     // Layout

@@ -69,8 +69,8 @@ To run this application natively on your local machine:
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/ITomPoland/portfolio-itom.git
-   cd portfolio-itom
+   git clone https://github.com/scottjones03/wedding.git
+   cd wedding
    ```
 
 2. **Install dependencies:**
@@ -86,6 +86,28 @@ To run this application natively on your local machine:
 
 > [!IMPORTANT]
 > Since this project heavily utilizes `vite-plugin-compression` and hundreds of high-res textures, your initial local load might take a few seconds as the dev-server buffers asset delivery. For performance testing, always run `npm run build && npm run preview`.
+
+---
+
+## Cloudflare Pages Deployment
+
+This repo is ready for a standard Cloudflare Pages Git deployment.
+
+Use these build settings in the Cloudflare dashboard:
+
+- Framework preset: `Vite`
+- Build command: `npm run build`
+- Build output directory: `dist`
+- Root directory: `/`
+
+Add these environment variables for both Production and Preview:
+
+- `VITE_WEB3FORMS_KEY`
+- `VITE_SITE_URL`
+- `VITE_POSTHOG_KEY` and `VITE_POSTHOG_HOST` if analytics are enabled
+- `NODE_VERSION=22`
+
+The `portfolio-itom` folder is a separate Sanity Studio project and should not be used as the Pages root.
 
 ## 🤝 Contributing & Feedback
 
