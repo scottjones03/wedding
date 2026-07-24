@@ -51,7 +51,7 @@ const CorridorSegment = ({
                 roomId: 'about',
                 relativeZ: -18,
                 side: 'left',
-                label: 'THE ABOUT',
+                label: 'ABOUT',
                 icon: '★',
                 color: '#efe6f5',
                 enterDistance: 25 // Enter deep into the room (clouds are far back)
@@ -70,7 +70,7 @@ const CorridorSegment = ({
                 roomId: 'gallery',
                 relativeZ: -48,
                 side: 'left',
-                label: 'OUR STORY',
+                label: 'GALLERY',
                 icon: '◈',
                 color: '#f5efe6'
             },
@@ -79,7 +79,7 @@ const CorridorSegment = ({
                 roomId: 'studio',
                 relativeZ: -62,
                 side: 'right',
-                label: 'THE ENGAGEMENT',
+                label: 'TV ROOM',
                 icon: '▶',
                 color: '#e6f5ef'
             },

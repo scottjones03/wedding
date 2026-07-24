@@ -400,7 +400,7 @@ const ContactRoom = ({ showRoom, onReady, isExiting, isWarmup }) => {
                 position={isMobile ? [1.5, 1.3, -11] : [5, 1.3, -12]}
                 rotation={[0, -0.3, 0]}
                 texturePath="/textures/contact/beczka.webp"
-                label="WEDDING INFO PDF"
+                label="INFO PDF"
                 onClick={() => downloadEventDetailsPdf()}
                 paintOnBeforeCompile={onBeforeCompile}
                 paintUniforms={uniformsData}

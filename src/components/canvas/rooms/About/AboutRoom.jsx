@@ -183,7 +183,7 @@ const AboutRoom = ({ showRoom, onReady, isExiting, isWarmup }) => {
     useEffect(() => {
         const handleWheel = (e) => {
             if (overlayRef.current) return; // BLOCK SCROLL IF OVERLAY IS OPEN
-            scrollVelocity.current += e.deltaY * 0.0026;
+            scrollVelocity.current += e.deltaY * 0.0065;
         };
 
         window.addEventListener('wheel', handleWheel, { passive: true });

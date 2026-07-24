@@ -294,18 +294,7 @@ const IntroMilestone = ({ z, scrollProgressRef }) => {
                 SCOTT & GEORGINA
             </Text>
 
-            {/* Subtitle - Brand (spreads right) */}
-            <Text
-                ref={brandRef}
-                position={[0, 4.3, 0.1]}
-                fontSize={0.45}
-                color="#4a4a4a"
-                anchorX="center"
-                anchorY="middle"
-                font="/fonts/CabinSketch-Regular.ttf"
-            >
-                (getting married)
-            </Text>
+     
 
             {/* Avatar on cloud - floating + spreads up-left */}
             <mesh ref={avatarRef} position={[0, baseY, 0]}>
@@ -318,33 +307,7 @@ const IntroMilestone = ({ z, scrollProgressRef }) => {
                 />
             </mesh>
 
-            {/* Motto - Line 1 (spreads right) */}
-            <Text
-                ref={motto1Ref}
-                position={[0, 0, 0.1]}
-                fontSize={0.32}
-                color="#555555"
-                anchorX="center"
-                anchorY="middle"
-                font="/fonts/CabinSketch-Regular.ttf"
-                fontStyle="italic"
-            >
-                "Two hearts,
-            </Text>
-
-            {/* Motto - Line 2 (spreads left) */}
-            <Text
-                ref={motto2Ref}
-                position={[0, -0.5, 0]}
-                fontSize={0.32}
-                color="#555555"
-                anchorX="center"
-                anchorY="middle"
-                font="/fonts/CabinSketch-Regular.ttf"
-                fontStyle="italic"
-            >
-                one story"
-            </Text>
+           
 
             {/* Wedding date */}
             <Text
