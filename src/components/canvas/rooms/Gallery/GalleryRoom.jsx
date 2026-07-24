@@ -43,13 +43,15 @@ const FALLBACK_PROJECTS = COUPLES_PHOTO_PATHS.map((path, index) => ({
     photoOnly: true,
 }));
 
-// One extra "page" is reserved for an auto-playing video montage of past photos,
-// hung right in the middle of the photo line.
+// One extra "page" is reserved for an auto-playing video montage of past photos.
+// Index 0 sits at the lowest/center point of the clothesline curve, which is
+// exactly what's front-and-center when you first walk into the room (before
+// any scrolling), so that's where the video card lives.
 const OUR_STORY_VIDEO_SRC = '/engagement/our_story_video.mp4';
 const OUR_STORY_VIDEO_ASPECT = 540 / 960;
 const PHOTO_COUNT = COUPLES_PHOTO_PATHS.length;
 const PROJECT_COUNT = PHOTO_COUNT + 1;
-const VIDEO_CARD_INDEX = Math.floor(PROJECT_COUNT / 2);
+const VIDEO_CARD_INDEX = 0;
 const GAP = 2.5;
 
 // Adjust this value (0.0 to 1.0) to crop the right side of the "Houses" graphic.
