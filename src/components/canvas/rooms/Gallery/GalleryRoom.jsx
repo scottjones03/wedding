@@ -12,7 +12,6 @@ import GalleryClouds from './GalleryClouds';
 import { useAudio } from '../../../../context/AudioManager';
 import { usePaintMaterial } from './usePaintMaterial';
 import { COUPLES_PHOTO_PATHS } from '../../../../config/couplesPhotoPaths';
-import { useVideoTexture } from '../../../../hooks/useVideoTexture';
 
 // Reusable Vector3 to avoid allocations in useFrame
 const _tempScale = new THREE.Vector3();
@@ -43,15 +42,7 @@ const FALLBACK_PROJECTS = COUPLES_PHOTO_PATHS.map((path, index) => ({
     photoOnly: true,
 }));
 
-// One extra "page" is reserved for an auto-playing video montage of past photos.
-// Index 0 sits at the lowest/center point of the clothesline curve, which is
-// exactly what's front-and-center when you first walk into the room (before
-// any scrolling), so that's where the video card lives.
-const OUR_STORY_VIDEO_SRC = '/engagement/our_story_video.mp4';
-const OUR_STORY_VIDEO_ASPECT = 540 / 960;
-const PHOTO_COUNT = COUPLES_PHOTO_PATHS.length;
-const PROJECT_COUNT = PHOTO_COUNT + 1;
-const VIDEO_CARD_INDEX = 0;
+const PROJECT_COUNT = COUPLES_PHOTO_PATHS.length;
 const GAP = 2.5;
 
 // Adjust this value (0.0 to 1.0) to crop the right side of the "Houses" graphic.
@@ -191,25 +182,7 @@ const GalleryRoom = ({ showRoom, onReady, isExiting, isWarmup }) => {
     // Construct the full list of projects (repeated) with textures attached
     const projects = useMemo(() => {
         return Array.from({ length: PROJECT_COUNT }).map((_, i) => {
-            if (i === VIDEO_CARD_INDEX) {
-                return {
-                    id: 'our-story-video',
-                    title: '',
-                    url: null,
-                    description: '',
-                    photoOnly: true,
-                    isVideo: true,
-                    videoSrc: OUR_STORY_VIDEO_SRC,
-                    index: i,
-                    frontTexture: null,
-                    paintedTexture: null,
-                    backTexture: backTextureRaw,
-                    buttonTexture: overlayTextureRaw
-                };
-            }
-
-            const photoIndex = (i < VIDEO_CARD_INDEX ? i : i - 1) % activeProjects.length;
-            const projectIndex = photoIndex;
+            const projectIndex = i % activeProjects.length;
             const projectData = activeProjects[projectIndex];
 
             // Extract front texture
@@ -537,11 +510,6 @@ const ProjectCard = memo(forwardRef(({ index, project, currentScroll, materials,
     const [isScrolling, setIsScrolling] = useState(false);  // True during scroll phase
 
     const cardSize = useMemo(() => {
-        if (project.isVideo) {
-            const targetHeight = 2.0;
-            return { width: targetHeight * OUR_STORY_VIDEO_ASPECT, height: targetHeight };
-        }
-
         const img = project.frontTexture?.image;
         if (!img?.width || !img?.height) {
             return { width: 1.5, height: 2.0 };
@@ -551,16 +519,12 @@ const ProjectCard = memo(forwardRef(({ index, project, currentScroll, materials,
         const targetHeight = 2.0;
         const targetWidth = targetHeight * aspect;
         return { width: targetWidth, height: targetHeight };
-    }, [project.frontTexture, project.isVideo]);
+    }, [project.frontTexture]);
 
     // Whether this project links out to an external page (e.g. photographer site).
     // Projects without a url just close the card instead of "opening" anything.
     const isPhotoOnly = Boolean(project.photoOnly);
     const hasUrl = Boolean(project.url) && !isPhotoOnly;
-
-    // Live-updating texture for the auto-playing video card (no-op for photo cards)
-    const videoTexture = useVideoTexture(project.isVideo ? project.videoSrc : null);
-    const displayTexture = project.isVideo ? videoTexture : project.frontTexture;
 
     // Random sway properties
     const swaySpeed = useRef(Math.random() * 0.2 + 0.3); // Slower sway speed
@@ -962,7 +926,7 @@ const ProjectCard = memo(forwardRef(({ index, project, currentScroll, materials,
                     <PaperMaterial
                         ref={materialRef}
                         color="#ffffff"
-                        map={displayTexture}
+                        map={project.frontTexture}
                         mapBack={project.backTexture}
                         mapPainted={project.paintedTexture}
                         side={THREE.DoubleSide}
