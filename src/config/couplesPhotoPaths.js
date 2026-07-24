@@ -152,9 +152,17 @@ const ALL_COUPLES_PHOTO_PATHS = [
 // Increase this number if devices can handle more; keep the full list above
 // so it's easy to swap which ones show later.
 //
-// Photos are sampled EVENLY across the whole list (which is roughly chronological)
-// so the gallery mixes older and newer photos instead of only showing the oldest ones.
-const GALLERY_PHOTO_LIMIT = 20;
+// Photos are sampled EVENLY across the whole list, ordered by the numeric ID in
+// each file name (IMG_XXXX), so the gallery mixes older and newer photos instead
+// of only showing the oldest ones.
+const GALLERY_PHOTO_LIMIT = 40;
+
+const getFileNumber = (path) => {
+    const match = path.match(/(\d+)(?:_\d+)?\.\w+$/);
+    return match ? parseInt(match[1], 10) : 0;
+};
+
+const SORTED_BY_FILENAME = [...ALL_COUPLES_PHOTO_PATHS].sort((a, b) => getFileNumber(a) - getFileNumber(b));
 
 const sampleEvenly = (items, count) => {
     if (count >= items.length) return items;
@@ -162,4 +170,4 @@ const sampleEvenly = (items, count) => {
     return Array.from({ length: count }, (_, i) => items[Math.floor(i * step)]);
 };
 
-export const COUPLES_PHOTO_PATHS = sampleEvenly(ALL_COUPLES_PHOTO_PATHS, GALLERY_PHOTO_LIMIT);
+export const COUPLES_PHOTO_PATHS = sampleEvenly(SORTED_BY_FILENAME, GALLERY_PHOTO_LIMIT);
