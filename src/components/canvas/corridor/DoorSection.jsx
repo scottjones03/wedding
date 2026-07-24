@@ -1074,28 +1074,16 @@ const DoorSection = ({
 
                         {/* === DYNAMIC TEXT FOR SIGNS === */}
                         {roomId === 'gallery' && (
-                            <group position={[0, 0, 0.01]}>
-                                <Text
-                                    font="/fonts/CabinSketch-Bold.ttf"
-                                    fontSize={0.25}
-                                    color="#111111"
-                                    anchorX="center"
-                                    anchorY="bottom"
-                                    position={[0, -0.02, 0]}
-                                >
-                                    OUR
-                                </Text>
-                                <Text
-                                    font="/fonts/CabinSketch-Bold.ttf"
-                                    fontSize={0.25}
-                                    color="#111111"
-                                    anchorX="center"
-                                    anchorY="top"
-                                    position={[0, +0.02, 0]}
-                                >
-                                    STORY
-                                </Text>
-                            </group>
+                            <Text
+                                font="/fonts/CabinSketch-Bold.ttf"
+                                fontSize={0.25}
+                                color="#111111"
+                                anchorX="center"
+                                anchorY="middle"
+                                position={[0, 0, 0.01]}
+                            >
+                                GALLERY
+                            </Text>
                         )}
                         {roomId === 'studio' && (
                             <group position={[0, 0, 0.01]}>
@@ -1107,7 +1095,7 @@ const DoorSection = ({
                                     anchorY="bottom"
                                     position={[0, -0.02, 0]}
                                 >
-                                    THE
+                                    TV
                                 </Text>
                                 <Text
                                     font="/fonts/CabinSketch-Bold.ttf"
@@ -1115,9 +1103,9 @@ const DoorSection = ({
                                     color="#111111"
                                     anchorX="center"
                                     anchorY="top"
-                                    position={[0, +0.03, 0]}
+                                    position={[0, +0.02, 0]}
                                 >
-                                    ENGAGEMENT
+                                    ROOM
                                 </Text>
                             </group>
                         )}

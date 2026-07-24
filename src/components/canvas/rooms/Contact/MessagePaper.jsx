@@ -635,7 +635,7 @@ const MessagePaper = ({ position = [0, 0.05, 2], onSend }) => {
                 <InteractiveTextField
                     isActive={activeField === 'subject'}
                     value={plusOnes}
-                    placeholder="plus-ones requested (optional, 0 if none)..."
+                    placeholder="plus-ones request (optional, 0 if none)..."
                     cursor={cursorVisible ? '|' : ' '}
                     onClick={() => { setActiveField('subject'); plusOnesInputRef.current?.focus(); }}
                     // Layout
@@ -652,7 +652,7 @@ const MessagePaper = ({ position = [0, 0.05, 2], onSend }) => {
                 <InteractiveTextField
                     isActive={activeField === 'plusOneNotes'}
                     value={plusOneNotes}
-                    placeholder="plus-one names or relationship (optional)..."
+                    placeholder="please provide plus-one name (optional)..."
                     cursor={cursorVisible ? '|' : ' '}
                     onClick={() => { setActiveField('plusOneNotes'); plusOneNotesInputRef.current?.focus(); }}
                     position={[-0.5, 0.008, -0.26]}

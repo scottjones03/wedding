@@ -18,13 +18,18 @@ export const DAY_GUEST_LIST = [
     'Stuart Yates',
     'Louise Yates',
     'Dominic Yates',
-    'Jolie',
-    'Theresa Jones',
+    'Jolie Smith',
+    'Theresa Jones', 
     'Owen Jones',
     'Wayne Jones',
     'Ellie Jones',
     'Monica Joseph',
     'Trevor Joseph',
+    'Jean Hopkinshon',
+    'Michelle Taylor',
+    'Chris Taylor',
+    'Henry Taylor',
+    'Tom Taylor'
 ];
 
 export const NIGHT_GUEST_LIST = [
