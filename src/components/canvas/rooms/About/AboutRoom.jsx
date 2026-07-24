@@ -183,7 +183,7 @@ const AboutRoom = ({ showRoom, onReady, isExiting, isWarmup }) => {
     useEffect(() => {
         const handleWheel = (e) => {
             if (overlayRef.current) return; // BLOCK SCROLL IF OVERLAY IS OPEN
-            scrollVelocity.current += e.deltaY * 0.002;
+            scrollVelocity.current += e.deltaY * 0.0026;
         };
 
         window.addEventListener('wheel', handleWheel, { passive: true });
@@ -205,7 +205,7 @@ const AboutRoom = ({ showRoom, onReady, isExiting, isWarmup }) => {
                 const deltaY = lastTouchY.current - e.touches[0].clientY;
                 lastTouchY.current = e.touches[0].clientY;
                 // Convert touch movement to scroll velocity
-                scrollVelocity.current += deltaY * 0.005;
+                scrollVelocity.current += deltaY * 0.0065;
             }
         };
 

@@ -16,6 +16,7 @@ import { useAudio } from '../../../../context/AudioManager';
 // ============================================
 import { useTexture } from '@react-three/drei';
 import { usePaintMaterial } from '../Gallery/usePaintMaterial';
+import { downloadEventDetailsPdf } from '../../../../utils/weddingInfoPdf';
 
 const WAVE_LAYERS = 4;
 
@@ -23,7 +24,6 @@ const WAVE_LAYERS = 4;
 const REGISTRY_URL = 'https://www.holmewood-hall.co.uk';
 const PHOTOS_URL = 'https://www.jetereshchenko.com/proposalcambridge/';
 const FACEBOOK_URL = '';
-const INSTAGRAM_URL = 'https://www.instagram.com/ginayates_/';
 
 // ============================================
 // ⚙️ AUDIO SETTINGS - TWEAK HERE
@@ -375,7 +375,7 @@ const ContactRoom = ({ showRoom, onReady, isExiting, isWarmup }) => {
             {/* 🛢️ SOCIAL BARRELS (Floating in water) */}
             {/* LINKEDIN */}
             <SocialBarrel
-                position={isMobile ? [-1.2, 2.1, -14] : [-3, 2.1, -14]}
+                position={isMobile ? [-1.2, 2.1, -14] : [0, 2.1, -14]}
                 rotation={[0, 0.2, 0]}
                 texturePath="/textures/contact/beczka.webp"
                 label="VENUE WEBSITE"
@@ -395,13 +395,13 @@ const ContactRoom = ({ showRoom, onReady, isExiting, isWarmup }) => {
             />
 
     
-            {/* INSTAGRAM */}
+            {/* WEDDING INFO PDF */}
             <SocialBarrel
                 position={isMobile ? [1.5, 1.3, -11] : [5, 1.3, -12]}
                 rotation={[0, -0.3, 0]}
                 texturePath="/textures/contact/beczka.webp"
-                label="INSTAGRAM"
-                onClick={() => INSTAGRAM_URL && window.open(INSTAGRAM_URL, '_blank')}
+                label="WEDDING INFO PDF"
+                onClick={() => downloadEventDetailsPdf()}
                 paintOnBeforeCompile={onBeforeCompile}
                 paintUniforms={uniformsData}
             />

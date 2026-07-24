@@ -42,30 +42,14 @@ const CorridorSegment = ({
     const zOffset = 10 - (segmentIndex * SEGMENT_LENGTH);
 
     // Door positions within this segment (relative to segment start)
+    // Order: About + RSVP come first (encountered soonest), Our Story + Engagement
+    // are further back in the corridor.
     const doors = useMemo(() => {
         const doorDefs = [
             {
-                id: `gallery-${segmentIndex}`,
-                roomId: 'gallery',
-                relativeZ: -18,
-                side: 'left',
-                label: 'OUR STORY',
-                icon: '◈',
-                color: '#f5efe6'
-            },
-            {
-                id: `studio-${segmentIndex}`,
-                roomId: 'studio',
-                relativeZ: -32,
-                side: 'right',
-                label: 'THE ENGAGEMENT',
-                icon: '▶',
-                color: '#e6f5ef'
-            },
-            {
                 id: `about-${segmentIndex}`,
                 roomId: 'about',
-                relativeZ: -48,
+                relativeZ: -18,
                 side: 'left',
                 label: 'THE ABOUT',
                 icon: '★',
@@ -75,11 +59,29 @@ const CorridorSegment = ({
             {
                 id: `connect-${segmentIndex}`,
                 roomId: 'contact',
-                relativeZ: -62,
+                relativeZ: -32,
                 side: 'right',
                 label: "RSVP",
                 icon: '✉',
                 color: '#f5e6e6'
+            },
+            {
+                id: `gallery-${segmentIndex}`,
+                roomId: 'gallery',
+                relativeZ: -48,
+                side: 'left',
+                label: 'OUR STORY',
+                icon: '◈',
+                color: '#f5efe6'
+            },
+            {
+                id: `studio-${segmentIndex}`,
+                roomId: 'studio',
+                relativeZ: -62,
+                side: 'right',
+                label: 'THE ENGAGEMENT',
+                icon: '▶',
+                color: '#e6f5ef'
             },
         ];
 

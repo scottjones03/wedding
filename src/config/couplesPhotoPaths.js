@@ -151,6 +151,15 @@ const ALL_COUPLES_PHOTO_PATHS = [
 // the full set (146 photos) as GPU textures was crashing the tab on phones.
 // Increase this number if devices can handle more; keep the full list above
 // so it's easy to swap which ones show later.
-const GALLERY_PHOTO_LIMIT = 10;
+//
+// Photos are sampled EVENLY across the whole list (which is roughly chronological)
+// so the gallery mixes older and newer photos instead of only showing the oldest ones.
+const GALLERY_PHOTO_LIMIT = 20;
 
-export const COUPLES_PHOTO_PATHS = ALL_COUPLES_PHOTO_PATHS.slice(0, GALLERY_PHOTO_LIMIT);
+const sampleEvenly = (items, count) => {
+    if (count >= items.length) return items;
+    const step = items.length / count;
+    return Array.from({ length: count }, (_, i) => items[Math.floor(i * step)]);
+};
+
+export const COUPLES_PHOTO_PATHS = sampleEvenly(ALL_COUPLES_PHOTO_PATHS, GALLERY_PHOTO_LIMIT);

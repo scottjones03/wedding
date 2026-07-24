@@ -4,11 +4,12 @@ import { useScene } from '../../../context/SceneContext';
 
 // Door positions (Global Z for Segment 0)
 // Calculation: 10 (Start Z) + Relative Z + 2 (Door Offset)
+// Order matches CorridorSegment.jsx's doorDefs: About + RSVP first, then Our Story + Engagement.
 const DOOR_POSITIONS_Z = {
-    'gallery': -6,   // 10 - 18 + 2
-    'studio': -20,   // 10 - 32 + 2
-    'about': -36,    // 10 - 48 + 2
-    'contact': -50   // 10 - 62 + 2
+    'about': -6,     // 10 - 18 + 2
+    'contact': -20,  // 10 - 32 + 2
+    'gallery': -36,  // 10 - 48 + 2
+    'studio': -50    // 10 - 62 + 2
 };
 
 /**
